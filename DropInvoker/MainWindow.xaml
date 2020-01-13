@@ -1,0 +1,172 @@
+﻿<Window x:Class="DropInvoker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DropInvoker"
+        mc:Ignorable="d"
+        Title="Drop Invoker"
+        Height="237"
+        Width="196"
+        ResizeMode="NoResize"
+        Topmost="True">
+    <Grid>
+        <Grid Margin="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <ComboBox ItemsSource="{Binding SceneLoaders}"
+                      SelectedItem="{Binding SelectedSceneLoader, Mode=OneWayToSource}"
+                      SelectedIndex="0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Grid Grid.Row="1"
+                  Margin="0,4,0,0"
+                  DataContext="{Binding Scene}">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="4"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="4"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="4"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="4"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <Style TargetType="Grid"
+                           x:Key="Root">
+                        <Setter Property="AllowDrop"
+                                Value="True" />
+                        <Setter Property="IsEnabled"
+                                Value="{Binding IsEnabled}" />
+                        <Setter Property="Background"
+                                Value="Transparent" />
+                    </Style>
+                    <Style TargetType="Border"
+                           x:Key="Border">
+                        <Setter Property="BorderThickness"
+                                Value="1" />
+                        <Setter Property="BorderBrush"
+                                Value="Black" />
+                        <Setter Property="SnapsToDevicePixels"
+                                Value="True" />
+                    </Style>
+                </Grid.Resources>
+
+                <Grid DataContext="{Binding Slots[0]}"
+                      Style="{StaticResource Root}"
+                      Drop="Slot_Drop">
+                    <Border Style="{StaticResource Border}">
+                        <Grid VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding Description}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid DataContext="{Binding Slots[1]}"
+                      Style="{StaticResource Root}"
+                      Grid.Column="2"
+                      Drop="Slot_Drop">
+                    <Border Style="{StaticResource Border}">
+                        <Grid VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding Description}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid DataContext="{Binding Slots[2]}"
+                      Style="{StaticResource Root}"
+                      Grid.Column="4"
+                      Drop="Slot_Drop">
+                    <Border Style="{StaticResource Border}">
+                        <Grid VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding Description}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid DataContext="{Binding Slots[3]}"
+                      Style="{StaticResource Root}"
+                      Grid.Row="2"
+                      Drop="Slot_Drop">
+                    <Border Style="{StaticResource Border}">
+                        <Grid VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding Description}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid DataContext="{Binding Slots[4]}"
+                      Style="{StaticResource Root}"
+                      Grid.Column="2"
+                      Grid.Row="2"
+                      Drop="Slot_Drop">
+                    <Border Style="{StaticResource Border}">
+                        <Grid VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding Description}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid DataContext="{Binding Slots[5]}"
+                      Style="{StaticResource Root}"
+                      Grid.Column="4"
+                      Grid.Row="2"
+                      Drop="Slot_Drop">
+                    <Border Style="{StaticResource Border}">
+                        <Grid VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding Description}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid DataContext="{Binding Slots[6]}"
+                      Style="{StaticResource Root}"
+                      Grid.Row="4"
+                      Drop="Slot_Drop">
+                    <Border Style="{StaticResource Border}">
+                        <Grid VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding Description}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid DataContext="{Binding Slots[7]}"
+                      Style="{StaticResource Root}"
+                      Grid.Column="2"
+                      Grid.Row="4"
+                      Drop="Slot_Drop">
+                    <Border Style="{StaticResource Border}">
+                        <Grid VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding Description}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid DataContext="{Binding Slots[8]}"
+                      Style="{StaticResource Root}"
+                      Grid.Column="4"
+                      Grid.Row="4"
+                      Drop="Slot_Drop">
+                    <Border Style="{StaticResource Border}">
+                        <Grid VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding Description}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
