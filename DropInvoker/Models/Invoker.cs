@@ -1,4 +1,5 @@
 ﻿using DropInvoker.Models.Configurations;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,6 +16,7 @@ namespace DropInvoker.Models
     {
         private readonly InvokerJson? _json;
         private readonly HashSet<string> _accepts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly Launcher _launcher;
 
         public Invoker(string? name)
         {
@@ -44,6 +46,11 @@ namespace DropInvoker.Models
                                 this._accepts.Add(a);
                         }
                     }
+
+                    if (json.Launcher != null)
+                    {
+                        this._launcher = LauncherLoader.Load(json.Launcher);
+                    }
                 }
             }
         }
@@ -71,24 +78,18 @@ namespace DropInvoker.Models
             {
                 var json = this._json!;
                 var s = new ProcessStartInfo();
-                s.FileName = json.Application;
-                foreach (var arg in json.Args ?? Array.Empty<string>())
+                s.FileName = json.Application ?? this._launcher.Application;
+
+                var invokerArgs = VariablesHelper.ExpandArguments(json.Args ?? Array.Empty<string>(), args);
+                foreach (var arg in this._launcher.ExpandArguments(invokerArgs))
                 {
-                    if (arg == "$0")
-                    {
-                        foreach (var a in args)
-                        {
-                            s.ArgumentList.Add(a);
-                        }
-                    }
-                    else
-                    {
-                        s.ArgumentList.Add(Environment.ExpandEnvironmentVariables(arg!));
-                    }
+                    s.ArgumentList.Add(arg);
                 }
-                if (json.WorkDir != null)
+
+                var workDir = json.WorkDir ?? this._launcher.WorkDir;
+                if (workDir != null)
                 {
-                    s.WorkingDirectory = Environment.ExpandEnvironmentVariables(json.WorkDir);
+                    s.WorkingDirectory = Environment.ExpandEnvironmentVariables(workDir);
                 }
 
                 try

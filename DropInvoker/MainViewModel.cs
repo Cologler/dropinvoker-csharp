@@ -31,8 +31,8 @@ namespace DropInvoker
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public Scene Scene { get; private set; }
+        public Scene? Scene { get; private set; }
     }
 }
