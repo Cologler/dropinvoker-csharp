@@ -88,7 +88,7 @@ namespace DropInvoker.Models
                 }
                 if (json.WorkDir != null)
                 {
-                    s.WorkingDirectory = json.WorkDir;
+                    s.WorkingDirectory = Environment.ExpandEnvironmentVariables(json.WorkDir);
                 }
 
                 try
