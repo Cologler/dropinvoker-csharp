@@ -14,6 +14,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace DropInvoker.Models
@@ -83,15 +84,33 @@ namespace DropInvoker.Models
             MessageBox.Show(Application.Current.MainWindow, message);
         }
 
-        public void OnDrop(DragEventArgs eventArgs)
+        public Task RunAsync(IEnumerable<string> args)
         {
             if (this.Launcher is null)
             {
                 this.ShowMessageBox($"unable load config file: {this.Description}");
-                return;
+                return Task.CompletedTask;
             }
 
-            void Invoke(IEnumerable<string> args) => this.Launcher.RunAsync(args);
+            try
+            {
+                return this.Launcher.RunAsync(args);
+            }
+            catch (Exception e)
+            {
+                this.ShowMessageBox($"catch exception when run the launcher: \n{e.Message}.");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task OnDrop(DragEventArgs eventArgs)
+        {
+            if (this.Launcher is null)
+            {
+                this.ShowMessageBox($"unable load config file: {this.Description}");
+                return Task.CompletedTask;
+            }
 
             if (eventArgs.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -114,14 +133,14 @@ namespace DropInvoker.Models
                     {
                         if (this._accepts.Contains(Accepts.File) || this._accepts.Contains(Accepts.Files))
                         {
-                            Invoke(dataStringArray);
+                            return this.Launcher.RunAsync(dataStringArray);
                         }
                     }
                     else if (pathInfos[0].Type == 2)
                     {
                         if (this._accepts.Contains(Accepts.Dir) || this._accepts.Contains(Accepts.Dirs))
                         {
-                            Invoke(dataStringArray);
+                            return this.Launcher.RunAsync(dataStringArray);
                         }
                     }
                 }
@@ -132,18 +151,18 @@ namespace DropInvoker.Models
                     {
                         if (types[0] == 1 && this._accepts.Contains(Accepts.Files))
                         {
-                            Invoke(dataStringArray);
+                            return this.Launcher.RunAsync(dataStringArray);
                         }
                         else if (pathInfos[0].Type == 2 && this._accepts.Contains(Accepts.Dirs))
                         {
-                            Invoke(dataStringArray);
+                            return this.Launcher.RunAsync(dataStringArray);
                         }
                     }
                     else if (types.Length == 2 && !types.Contains(0))
                     {
                         if (this._accepts.Contains(Accepts.Files) && this._accepts.Contains(Accepts.Dirs))
                         {
-                            Invoke(dataStringArray);
+                            return this.Launcher.RunAsync(dataStringArray);
                         }
                     }
                 }
@@ -154,9 +173,11 @@ namespace DropInvoker.Models
                 if (this._accepts.Contains(Accepts.Text))
                 {
                     var data = (string)eventArgs.Data.GetData(DataFormats.UnicodeText);
-                    Invoke(new string[] { data });
+                    return this.Launcher.RunAsync(new string[] { data });
                 }
             }
+
+            return Task.CompletedTask;
         }
     }
 }
