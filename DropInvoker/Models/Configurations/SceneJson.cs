@@ -8,6 +8,6 @@ namespace DropInvoker.Models.Configurations
     class SceneJson
     {
         [JsonPropertyName("slots")]
-        public Dictionary<string, string?>? Slots { get; set; }
+        public string?[]? Slots { get; set; }
     }
 }
