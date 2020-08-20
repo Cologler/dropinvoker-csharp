@@ -36,8 +36,14 @@ namespace RLauncher
                 startInfo.ArgumentList.Add(args);
 
             var workingDirectory = this.WorkingDirectory ?? context.Launcher.WorkingDirectory;
-            if (workingDirectory != null)
+            if (workingDirectory is null)
+            {
+                startInfo.WorkingDirectory = Path.GetDirectoryName(Path.GetFullPath(startInfo.FileName));
+            }
+            else
+            {
                 startInfo.WorkingDirectory = this.DecodeArgument(workingDirectory);
+            }
 
             return this.RunAsync(startInfo);
         }
