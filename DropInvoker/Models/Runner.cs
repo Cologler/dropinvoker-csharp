@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace DropInvoker.Models
 {
-    struct Launcher
+    struct Runner
     {
-        private readonly LauncherJson _json;
+        private readonly RunnerJson _json;
 
-        public Launcher(LauncherJson json) => this._json = json;
+        public Runner(RunnerJson json) => this._json = json;
 
         public IEnumerable<string> ExpandArguments(IEnumerable<string> invokerArgs)
         {

@@ -54,16 +54,17 @@ namespace RLauncher
             if (data is null)
                 throw new ArgumentNullException(nameof(data));
 
-            var runnerName = data.Runner;
-            if (runnerName != null)
+            var snapshot = new LauncherDataSnapshot(data);
+
+            if (snapshot.Runner != null)
             {
                 var runnerManager = this._serviceProvider.GetRequiredService<IRunnerManager>();
-                runnerManager.GetRunner(runnerName); // ensure we can get runner without exception.
+                runnerManager.GetRunner(snapshot.Runner); // ensure we can get runner without exception.
             }
 
-            this._launcherData = new LauncherDataSnapshot(data);
+            this._launcherData = snapshot;
 
-            var template = data.Template;
+            var template = snapshot.Template;
             if (template is null)
             {
                 this.Template = null;

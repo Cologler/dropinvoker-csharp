@@ -2,7 +2,7 @@
 
 namespace DropInvoker.Models.Configurations
 {
-    class LauncherJson
+    class RunnerJson
     {
         [JsonPropertyName("app")]
         public string? Application { get; set; }

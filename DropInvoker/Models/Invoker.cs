@@ -16,7 +16,7 @@ namespace DropInvoker.Models
     {
         private readonly InvokerJson? _json;
         private readonly HashSet<string> _accepts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private readonly Launcher _launcher;
+        private readonly Runner _launcher;
 
         public Invoker(string? name)
         {

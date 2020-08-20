@@ -9,10 +9,10 @@ namespace DropInvoker.Models
 {
     class RunnerLoader
     {
-        private static readonly Dictionary<string, Launcher> _cache =
-            new Dictionary<string, Launcher>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Runner> _cache =
+            new Dictionary<string, Runner>(StringComparer.OrdinalIgnoreCase);
 
-        public static Launcher Load(string name)
+        public static Runner Load(string name)
         {
             if (!_cache.TryGetValue(name, out var launcher))
             {
@@ -20,8 +20,8 @@ namespace DropInvoker.Models
                 if (File.Exists(path))
                 {
                     var text = File.ReadAllText(path);
-                    var json = JsonSerializer.Deserialize<LauncherJson>(text);
-                    launcher = new Launcher(json);
+                    var json = JsonSerializer.Deserialize<RunnerJson>(text);
+                    launcher = new Runner(json);
                     _cache.Add(name, launcher);
                 }
             }

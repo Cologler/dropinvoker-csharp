@@ -1,4 +1,5 @@
 ﻿
+using RLauncher.Internal;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -8,11 +9,13 @@ namespace RLauncher
 {
     public class Runner : BaseRunner
     {
-        public string? Executable { get; set; } 
+        private IRunnerData? _data;
 
-        public string[]? Arguments { get; set; }
+        public string? Executable => this._data?.Executable;
 
-        public string? WorkingDirectory { get; set; }
+        public string?[]? Arguments => this._data?.Arguments;
+
+        public string? WorkingDirectory => this._data?.WorkingDirectory;
 
         public override Task RunAsync(RunContext context)
         {
@@ -37,6 +40,14 @@ namespace RLauncher
                 startInfo.WorkingDirectory = this.DecodeArgument(workingDirectory);
 
             return this.RunAsync(startInfo);
+        }
+
+        public void LoadFrom(IRunnerData data)
+        {
+            if (data is null)
+                throw new ArgumentNullException(nameof(data));
+
+            this._data = new RunnerDataSnapshot(data);
         }
     }
 }
