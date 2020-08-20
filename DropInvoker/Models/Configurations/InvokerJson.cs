@@ -9,9 +9,6 @@ namespace DropInvoker.Models.Configurations
         [JsonPropertyName(PropertyNames.Runner)]
         public string? Runner { get; set; }
 
-        [JsonPropertyName("app")]
-        public string? Application { get; set; }
-
         [JsonPropertyName(PropertyNames.Description)]
         public string? Description { get; set; }
 

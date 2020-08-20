@@ -17,15 +17,15 @@ namespace DropInvoker.Models
                 if (sceneInfo.Slots != null &&
                     sceneInfo.Slots!.TryGetValue(i.ToString(), out var slot) && slot != null)
                 {
-                    this.Slots.Add(new Invoker(slot));
+                    this.Slots.Add(new LauncherViewModel(slot));
                 }
                 else
                 {
-                    this.Slots.Add(Invoker.Empty);
+                    this.Slots.Add(LauncherViewModel.Empty);
                 }
             }
         }
 
-        public List<Invoker> Slots { get; } = new List<Invoker>();
+        public List<LauncherViewModel> Slots { get; } = new List<LauncherViewModel>();
     }
 }

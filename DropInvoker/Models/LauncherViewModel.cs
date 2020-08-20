@@ -1,5 +1,11 @@
 ﻿using DropInvoker.Models.Configurations;
 
+using Microsoft.Extensions.DependencyInjection;
+
+using RLauncher;
+using RLauncher.Json;
+using RLauncher.Yaml;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,13 +18,11 @@ using System.Windows;
 
 namespace DropInvoker.Models
 {
-    class Invoker
+    class LauncherViewModel
     {
-        private readonly InvokerJson? _json;
         private readonly HashSet<string> _accepts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private readonly Runner _launcher;
 
-        public Invoker(string? name)
+        public LauncherViewModel(string? name)
         {
             if (name is null)
             {
@@ -30,36 +34,49 @@ namespace DropInvoker.Models
                 this.Description = name;
                 this.IsEnabled = true;
 
-                var path = Path.Combine("invokers", name + ".json");
-                if (File.Exists(path))
+                this.Launcher = LoadLauncher(name);
+                if (this.Launcher != null)
                 {
-                    var text = File.ReadAllText(path);
-                    var json = JsonSerializer.Deserialize<InvokerJson>(text);
-                    this._json = json;
-
-                    this.Description = json.Description ?? this.Description;
-                    if (json.Accept != null)
+                    this.Description = this.Launcher.Description;
+                    foreach (var accept in this.Launcher.Accepts)
                     {
-                        foreach (var a in json.Accept)
-                        {
-                            if (a != null)
-                                this._accepts.Add(a);
-                        }
-                    }
-
-                    if (json.Runner != null)
-                    {
-                        this._launcher = RunnerLoader.Load(json.Runner);
+                        if (accept != null)
+                            this._accepts.Add(accept);
                     }
                 }
             }
         }
 
+        private static Launcher? LoadLauncher(string name)
+        {
+            var launcher = ((App)Application.Current).ServiceProvider.GetRequiredService<Launcher>();
+
+            var prefix = Path.Combine("launchers", name);
+
+            var yamlPath = prefix + ".yaml";
+            if (File.Exists(yamlPath))
+            {
+                launcher.LoadFromYaml(File.ReadAllText(yamlPath));
+                return launcher;
+            }
+
+            var jsonPath = prefix + ".json";
+            if (File.Exists(jsonPath))
+            {
+                launcher.LoadFromJson(File.ReadAllText(jsonPath));
+                return launcher;
+            }
+
+            return null;
+        }
+
+        public Launcher? Launcher { get; }
+
         public string Description { get; }
 
         public bool IsEnabled { get; }
 
-        public static Invoker Empty { get; } = new Invoker(null);
+        public static LauncherViewModel Empty { get; } = new LauncherViewModel(null);
 
         private void ShowMessageBox(string message)
         {
@@ -68,52 +85,13 @@ namespace DropInvoker.Models
 
         public void OnDrop(DragEventArgs eventArgs)
         {
-            if (this._json is null)
+            if (this.Launcher is null)
             {
-                ShowMessageBox($"unable load config file: {this.Description}");
+                this.ShowMessageBox($"unable load config file: {this.Description}");
                 return;
             }
 
-            void Invoke(IEnumerable<string> args)
-            {
-                var json = this._json!;
-                var s = new ProcessStartInfo();
-                s.FileName = json.Application ?? this._launcher.Application;
-
-                var invokerArgs = VariablesHelper.ExpandArguments(json.Args ?? Array.Empty<string>(), args);
-                foreach (var arg in this._launcher.ExpandArguments(invokerArgs))
-                {
-                    s.ArgumentList.Add(arg);
-                }
-
-                var workDir = json.WorkDir ?? this._launcher.WorkDir;
-                if (workDir != null)
-                {
-                    s.WorkingDirectory = Environment.ExpandEnvironmentVariables(workDir);
-                }
-
-                try
-                {
-                    using var _ = Process.Start(s);
-                }
-                catch (Exception e)
-                {
-                    var msg = new StringBuilder()
-                        .AppendLine("run app:")
-                        .AppendLine()
-                        .AppendLine("    " + s.FileName);
-                    foreach (var a in s.ArgumentList)
-                    {
-                        msg.AppendLine("    - " + a);
-                    }
-                    msg.AppendLine()
-                        .AppendLine("raise error:")
-                        .AppendLine()
-                        .AppendLine(e.Message);
-
-                    ShowMessageBox(msg.ToString());
-                }
-            }
+            void Invoke(IEnumerable<string> args) => this.Launcher.RunAsync(args);
 
             if (eventArgs.Data.GetDataPresent(DataFormats.FileDrop))
             {

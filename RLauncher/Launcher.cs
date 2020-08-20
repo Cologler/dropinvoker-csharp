@@ -18,7 +18,7 @@ namespace RLauncher
 
         public Launcher(IServiceProvider serviceProvider)
         {
-            this._serviceProvider = serviceProvider;
+            this._serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public IRunner Runner
@@ -26,8 +26,10 @@ namespace RLauncher
             get
             {
                 var name = this._launcherData?.Runner;
-                var runnerManager = this._serviceProvider.GetRequiredService<IRunnerManager>();
-                return name is null ? runnerManager.GetDefaultRunner() : runnerManager.GetRunner(name);
+                return name is null 
+                    ? this._serviceProvider.GetRequiredService<IDefaultRunner>()
+                    : this._serviceProvider.GetRequiredService<IRunnerLoader>().GetRunner(name)
+                    ?? this._serviceProvider.GetRequiredService<IDefaultRunner>();
             }
         }
 
@@ -56,12 +58,6 @@ namespace RLauncher
 
             var snapshot = new LauncherDataSnapshot(data);
 
-            if (snapshot.Runner != null)
-            {
-                var runnerManager = this._serviceProvider.GetRequiredService<IRunnerManager>();
-                runnerManager.GetRunner(snapshot.Runner); // ensure we can get runner without exception.
-            }
-
             this._launcherData = snapshot;
 
             var template = snapshot.Template;
@@ -71,8 +67,8 @@ namespace RLauncher
             }
             else
             {
-                this.Template = this._serviceProvider.GetRequiredService<ILauncherLoader>()
-                    .TryGetTemplate(template);
+                this.Template = this._serviceProvider.GetRequiredService<ITemplateLoader>()
+                    .GetTemplate(template);
             }             
         }
     }

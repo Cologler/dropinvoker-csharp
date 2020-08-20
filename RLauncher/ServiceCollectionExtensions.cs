@@ -10,17 +10,15 @@ namespace RLauncher
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection UseRLauncher(this IServiceCollection services,
-            ILauncherLoader launcherLoader)
+        public static IServiceCollection UseRLauncher(this IServiceCollection services)
         {
             if (services is null)
                 throw new ArgumentNullException(nameof(services));
-            if (launcherLoader is null)
-                throw new ArgumentNullException(nameof(launcherLoader));
 
-            services.AddSingleton<IRunnerManager, RunnerManager>()
+            services
+                .AddSingleton<IDefaultRunner, ExecutableRunner>()
                 .AddTransient<Launcher>()
-                .AddSingleton(launcherLoader);
+                .AddSingleton<IRunnerLoader, NullRunnerLoader>();
 
             return services;
         }

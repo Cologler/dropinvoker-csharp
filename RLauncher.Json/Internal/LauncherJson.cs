@@ -1,9 +1,10 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace RLauncher.Yaml.Internal
+namespace RLauncher.Json.Internal
 {
     class LauncherJson : ILauncherData
     {

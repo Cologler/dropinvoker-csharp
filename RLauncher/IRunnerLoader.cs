@@ -2,6 +2,6 @@
 {
     public interface IRunnerLoader
     {
-        public IRunner? TryLoad(string name);
+        public IRunner? GetRunner(string name);
     }
 }

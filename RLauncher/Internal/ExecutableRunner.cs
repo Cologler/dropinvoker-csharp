@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RLauncher.Internal
 {
-    internal class ExecutableRunner : BaseRunner
+    internal class ExecutableRunner : BaseRunner, IDefaultRunner
     {
         public override Task RunAsync(RunContext context)
         {
