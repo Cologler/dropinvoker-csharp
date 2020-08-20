@@ -34,7 +34,7 @@ namespace RLauncher.Internal
             }
             else
             {
-                startInfo.WorkingDirectory = this.DecodeArgument(workingDirectory);
+                startInfo.WorkingDirectory = this.DecodeArgument(context, workingDirectory);
             }
 
             return base.RunAsync(startInfo);

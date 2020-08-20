@@ -31,7 +31,7 @@ namespace RLauncher
             }
 
             startInfo.FileName = executable;
-            var arguments = this.ExpandArguments(this.Arguments, this.ExpandArguments(context));
+            var arguments = this.ExpandArguments(context, this.Arguments, this.ExpandArguments(context));
             foreach (var args in arguments)
                 startInfo.ArgumentList.Add(args);
 
@@ -42,7 +42,7 @@ namespace RLauncher
             }
             else
             {
-                startInfo.WorkingDirectory = this.DecodeArgument(workingDirectory);
+                startInfo.WorkingDirectory = this.DecodeArgument(context, workingDirectory);
             }
 
             return this.RunAsync(startInfo);
