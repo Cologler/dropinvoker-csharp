@@ -23,10 +23,12 @@ namespace DropInvoker.Models
             if (name is null)
             {
                 this.Description = string.Empty;
+                this.IsEnabled = false;
             }
             else
             {
                 this.Description = name;
+                this.IsEnabled = true;
 
                 var path = Path.Combine("invokers", name + ".json");
                 if (File.Exists(path))
@@ -54,6 +56,8 @@ namespace DropInvoker.Models
         }
 
         public string Description { get; }
+
+        public bool IsEnabled { get; }
 
         public static Invoker Empty { get; } = new Invoker(null);
 
