@@ -47,9 +47,9 @@ namespace DropInvoker.Models
                         }
                     }
 
-                    if (json.Launcher != null)
+                    if (json.Runner != null)
                     {
-                        this._launcher = LauncherLoader.Load(json.Launcher);
+                        this._launcher = RunnerLoader.Load(json.Runner);
                     }
                 }
             }

@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace DropInvoker.Models
 {
-    class LauncherLoader
+    class RunnerLoader
     {
         private static readonly Dictionary<string, Launcher> _cache =
             new Dictionary<string, Launcher>(StringComparer.OrdinalIgnoreCase);
