@@ -63,7 +63,5 @@ namespace RLauncher
 
             return Environment.ExpandEnvironmentVariables(value);
         }
-
-        private static Regex ArgumentCaptureRegex = new Regex(@"^\$(?<index>[\d]+)(?:\[(?<field>dirname)\])?$");
     }
 }
