@@ -12,9 +12,16 @@ namespace DropInvoker
     {
         public MainViewModel()
         {
-            this.SceneLoaders.AddRange(
-                Directory.GetFiles("scenes").Select(z => new SceneLoader(z))
-            );
+            try
+            {
+                this.SceneLoaders.AddRange(
+                    Directory.GetFiles("scenes").Select(z => new SceneLoader(z))
+                );
+            }
+            catch (DirectoryNotFoundException)
+            {
+                // pass
+            }
         }
 
         public List<SceneLoader> SceneLoaders { get; } = new List<SceneLoader>();
