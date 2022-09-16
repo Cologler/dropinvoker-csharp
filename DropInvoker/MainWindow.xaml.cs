@@ -1,4 +1,7 @@
 ﻿using DropInvoker.Models;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +27,7 @@ namespace DropInvoker
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainViewModel();
+            this.DataContext = ((App)Application.Current).ServiceProvider.GetRequiredService<MainViewModel>();
         }
 
         private void Slot_Drop(object sender, DragEventArgs e)

@@ -10,13 +10,11 @@ namespace DropInvoker
 {
     class MainViewModel : INotifyPropertyChanged
     {
-        public MainViewModel()
+        public MainViewModel(AppDirectories directories)
         {
             try
             {
-                this.SceneLoaders.AddRange(
-                    Directory.GetFiles("scenes").Select(z => new SceneLoader(z))
-                );
+                this.SceneLoaders.AddRange(Directory.GetFiles(directories.GetScenesPath()).Select(z => new SceneLoader(z)));
             }
             catch (DirectoryNotFoundException)
             {

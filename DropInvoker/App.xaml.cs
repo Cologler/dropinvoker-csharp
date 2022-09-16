@@ -27,6 +27,8 @@ namespace DropInvoker
                 .UseRLauncher()
                 .AddSingleton<ITemplateLoader, TemplateLoader>()
                 .AddSingleton<IRunnerLoader, RunnerLoader>()
+                .AddSingleton<MainViewModel>()
+                .AddSingleton<AppDirectories>()
                 .BuildServiceProvider();
 
             base.OnStartup(e);
