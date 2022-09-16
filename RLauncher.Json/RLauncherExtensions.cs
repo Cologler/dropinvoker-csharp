@@ -1,4 +1,5 @@
-﻿using RLauncher.Yaml.Internal;
+﻿using RLauncher.Exceptions;
+using RLauncher.Yaml.Internal;
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,27 @@ namespace RLauncher.Json
             if (launcher is null)
                 throw new ArgumentNullException(nameof(launcher));
 
-            launcher.LoadFrom(JsonUtils.ToLauncherData(jsonText));
+            try
+            {
+                if (JsonUtils.ToLauncherData(jsonText) is not { } data)
+                {
+                    throw new InvalidRLauncherConfigurationFileException()
+                    {
+                        FileType = ConfigurationFileTypes.Launcher,
+                        FileContent = jsonText
+                    };
+                }
+
+                launcher.LoadFrom(data);
+            }
+            catch (JsonException)
+            {
+                throw new InvalidRLauncherConfigurationFileException()
+                {
+                    FileType = ConfigurationFileTypes.Launcher,
+                    FileContent = jsonText
+                };
+            }
         }
 
         public static void LoadFromJson(this Runner runner, string jsonText)
@@ -24,8 +45,27 @@ namespace RLauncher.Json
             if (jsonText is null)
                 throw new ArgumentNullException(nameof(jsonText));
 
-            var obj = JsonSerializer.Deserialize<RunnerJson>(jsonText);
-            runner.LoadFrom(obj);
+            try
+            {
+                if (JsonSerializer.Deserialize<RunnerJson>(jsonText) is not { } data)
+                {
+                    throw new InvalidRLauncherConfigurationFileException()
+                    {
+                        FileType = ConfigurationFileTypes.Runner,
+                        FileContent = jsonText
+                    };
+                }
+
+                runner.LoadFrom(data);
+            }
+            catch (JsonException)
+            {
+                throw new InvalidRLauncherConfigurationFileException()
+                {
+                    FileType = ConfigurationFileTypes.Launcher,
+                    FileContent = jsonText
+                };
+            }
         }
     }
 }

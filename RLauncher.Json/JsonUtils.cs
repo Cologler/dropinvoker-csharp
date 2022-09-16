@@ -7,7 +7,7 @@ namespace RLauncher.Json
 {
     public static class JsonUtils
     {
-        public static ILauncherData ToLauncherData(string jsonText)
+        public static ILauncherData? ToLauncherData(string jsonText)
         {
             if (jsonText is null)
                 throw new ArgumentNullException(nameof(jsonText));

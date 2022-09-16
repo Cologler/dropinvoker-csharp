@@ -104,7 +104,7 @@ namespace DropInvoker.Models
             return Task.CompletedTask;
         }
 
-        public Task OnDrop(DragEventArgs eventArgs)
+        public Task OnDropAsync(DragEventArgs eventArgs)
         {
             if (this.Launcher is null)
             {

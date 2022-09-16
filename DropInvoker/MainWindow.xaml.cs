@@ -2,6 +2,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
+using RLauncher.Exceptions;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,9 +32,18 @@ namespace DropInvoker
             this.DataContext = ((App)Application.Current).ServiceProvider.GetRequiredService<MainViewModel>();
         }
 
-        private void Slot_Drop(object sender, DragEventArgs e)
+        private async void Slot_Drop(object sender, DragEventArgs e)
         {
-            ((LauncherViewModel)((FrameworkElement)sender).DataContext).OnDrop(e);
+            try
+            {
+                await ((LauncherViewModel)((FrameworkElement)sender).DataContext).OnDropAsync(e);
+            }
+            catch (InvalidRLauncherConfigurationFileException exc)
+            {
+                var title = $"Failed to parse {exc.FileType}";
+                var message = $"Unable parse from {exc.FileFullPath} to {exc.FileType}\nSource:\n{exc.FileContent}";
+                MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

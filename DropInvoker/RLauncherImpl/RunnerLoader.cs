@@ -1,4 +1,5 @@
 ﻿using RLauncher;
+using RLauncher.Exceptions;
 using RLauncher.Json;
 using RLauncher.Yaml;
 
@@ -32,18 +33,32 @@ namespace DropInvoker.RLauncherImpl
             var runner = new Runner();
             var prefix = Path.Combine("runners", name);
 
-            var yamlPath = prefix + ".yaml";
-            if (File.Exists(yamlPath))
-            {
-                runner.LoadFromYaml(File.ReadAllText(yamlPath));
-                return runner;
-            }
+            string? fileName = null;
+            string? fileContent = null;
 
-            var jsonPath = prefix + ".json";
-            if (File.Exists(jsonPath))
+            try
             {
-                runner.LoadFromJson(File.ReadAllText(jsonPath));
-                return runner;
+                fileName = prefix + ".yaml";
+                if (File.Exists(fileName))
+                {
+                    fileContent = File.ReadAllText(fileName);
+                    runner.LoadFromYaml(fileContent);
+                    return runner;
+                }
+
+                fileName = prefix + ".json";
+                if (File.Exists(fileName))
+                {
+                    fileContent = File.ReadAllText(fileName);
+                    runner.LoadFromJson(fileContent);
+                    return runner;
+                }
+            }
+            catch (InvalidRLauncherConfigurationFileException exc)
+            {
+                exc.FileFullPath = Path.GetFullPath(fileName!);
+                exc.FileContent = fileContent;
+                throw;
             }
 
             return null;
