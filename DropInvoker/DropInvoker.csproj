@@ -2,9 +2,15 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RLauncher.Json\RLauncher.Json.csproj" />
+    <ProjectReference Include="..\RLauncher.Yaml\RLauncher.Yaml.csproj" />
+    <ProjectReference Include="..\RLauncher\RLauncher.csproj" />
+  </ItemGroup>
 
 </Project>

@@ -29,7 +29,7 @@ namespace DropInvoker
 
         private void Slot_Drop(object sender, DragEventArgs e)
         {
-            ((Invoker)((FrameworkElement)sender).DataContext).OnDrop(e);
+            ((LauncherViewModel)((FrameworkElement)sender).DataContext).OnDrop(e);
         }
     }
 }

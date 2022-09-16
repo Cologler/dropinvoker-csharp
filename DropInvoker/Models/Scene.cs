@@ -1,4 +1,6 @@
 ﻿using DropInvoker.Models.Configurations;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,20 +14,13 @@ namespace DropInvoker.Models
 
         public Scene(SceneJson sceneInfo)
         {
-            for (var i = 0; i < SlotCount; i++)
+            var slots = sceneInfo.Slots ?? Array.Empty<string>();
+            foreach (var slot in slots.Take(9))
             {
-                if (sceneInfo.Slots != null &&
-                    sceneInfo.Slots!.TryGetValue(i.ToString(), out var slot) && slot != null)
-                {
-                    this.Slots.Add(new Invoker(slot));
-                }
-                else
-                {
-                    this.Slots.Add(Invoker.Empty);
-                }
+                this.Slots.Add(slot is null ? LauncherViewModel.Empty : new LauncherViewModel(slot));
             }
         }
 
-        public List<Invoker> Slots { get; } = new List<Invoker>();
+        public List<LauncherViewModel> Slots { get; } = new List<LauncherViewModel>();
     }
 }
