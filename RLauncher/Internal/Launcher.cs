@@ -35,13 +35,13 @@ namespace RLauncher.Internal
         {
             ArgumentNullException.ThrowIfNull(arguments);
 
-            var context = new RunContext(this, arguments.ToArray());
-
             var runnerName = _launcherData?.Runner;
             var runner = runnerName is null
                     ? _serviceProvider.GetRequiredService<IDefaultRunner>()
                     : await _serviceProvider.GetRequiredService<IRunnerLoader>().GetRunnerAsync(runnerName).ConfigureAwait(false)
                     ?? _serviceProvider.GetRequiredService<IDefaultRunner>();
+
+            var context = new RunContext(this, runner, arguments.ToArray());
 
             await runner.RunAsync(context).ConfigureAwait(false);
         }

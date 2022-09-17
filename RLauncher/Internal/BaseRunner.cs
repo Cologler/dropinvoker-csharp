@@ -49,24 +49,29 @@ namespace RLauncher.Internal
                 {
                     foreach (var a in refArgs)
                     {
-                        yield return this.DecodeArgument(context, a);
+                        yield return this.ExpandVariable(context, a);
                     }
                 }
                 else
                 {
-                    yield return this.DecodeArgument(context, arg);
+                    yield return this.ExpandVariable(context, arg);
                 }
             }
         }
 
-        internal protected string DecodeArgument(RunContext context, in string argumentValue)
+        internal protected string ExpandVariable(RunContext context, in string argument)
         {
             if (context is null)
                 throw new ArgumentNullException(nameof(context));
-            if (argumentValue is null)
-                throw new ArgumentNullException(nameof(argumentValue));
+            if (argument is null)
+                throw new ArgumentNullException(nameof(argument));
 
-            var value = argumentValue;
+            var value = argument;
+
+            if (value == "~" || (value.Length >= 2 && value[..1] == "~" && "/\\".Contains(value[1])))
+            {
+                value = string.Concat("%USERPROFILE%", value.AsSpan(1));
+            }
 
             return Environment.ExpandEnvironmentVariables(value);
         }
