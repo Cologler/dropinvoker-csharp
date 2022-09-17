@@ -117,54 +117,9 @@ namespace DropInvoker.Models
                 var dataStringArray = (string[])eventArgs.Data.GetData(DataFormats.FileDrop);
                 Debug.Assert(dataStringArray.Length > 0);
 
-                var pathInfos = dataStringArray.Select(z =>
+                if (TestFileDrop(this._accepts, dataStringArray))
                 {
-                    var t = 0;
-                    if (File.Exists(z))
-                        t = 1;
-                    if (Directory.Exists(z))
-                        t = 2;
-                    return (Type: t, Path: z);
-                }).ToArray();
-
-                if (pathInfos.Length == 1)
-                {
-                    if (pathInfos[0].Type == 1)
-                    {
-                        if (this._accepts.Contains(Accepts.File) || this._accepts.Contains(Accepts.Files))
-                        {
-                            return this.Launcher.RunAsync(dataStringArray);
-                        }
-                    }
-                    else if (pathInfos[0].Type == 2)
-                    {
-                        if (this._accepts.Contains(Accepts.Dir) || this._accepts.Contains(Accepts.Dirs))
-                        {
-                            return this.Launcher.RunAsync(dataStringArray);
-                        }
-                    }
-                }
-                else
-                {
-                    var types = pathInfos.Select(z => z.Type).Distinct().ToArray();
-                    if (types.Length == 1)
-                    {
-                        if (types[0] == 1 && this._accepts.Contains(Accepts.Files))
-                        {
-                            return this.Launcher.RunAsync(dataStringArray);
-                        }
-                        else if (pathInfos[0].Type == 2 && this._accepts.Contains(Accepts.Dirs))
-                        {
-                            return this.Launcher.RunAsync(dataStringArray);
-                        }
-                    }
-                    else if (types.Length == 2 && !types.Contains(0))
-                    {
-                        if (this._accepts.Contains(Accepts.Files) && this._accepts.Contains(Accepts.Dirs))
-                        {
-                            return this.Launcher.RunAsync(dataStringArray);
-                        }
-                    }
+                    return this.Launcher.RunAsync(dataStringArray);
                 }
             }
 
@@ -178,6 +133,58 @@ namespace DropInvoker.Models
             }
 
             return Task.CompletedTask;
+
+            static bool TestFileDrop(IReadOnlySet<string> accepts, string[] paths)
+            {
+                Debug.Assert(paths.Length > 0);
+
+                var files = new List<string>(paths.Length);
+                var dirs = new List<string>(paths.Length);
+                var others = new List<string>();
+
+                foreach (var item in paths)
+                {
+                    if (File.Exists(item))
+                    {
+                        files.Add(item);
+                    } 
+                    else if (Directory.Exists(item))
+                    {
+                        dirs.Add(item);
+                    }
+                    else
+                    {
+                        others.Add(item);
+                    } 
+                }
+
+                if (others.Count > 0)
+                    return false;
+
+                if (files.Count == 0)
+                {
+                    Debug.Assert(dirs.Count == paths.Length);
+
+                    if (accepts.Contains(Accepts.Dirs))
+                        return true;
+
+                    if (accepts.Contains(Accepts.Dir) && dirs.Count == 1)
+                        return true;
+                }
+
+                if (dirs.Count == 0)
+                {
+                    Debug.Assert(files.Count == paths.Length);
+
+                    if (accepts.Contains(Accepts.Files))
+                        return true;
+
+                    if (accepts.Contains(Accepts.File) && files.Count == 1)
+                        return true;
+                }
+
+                return false;
+            }
         }
     }
 }
