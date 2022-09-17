@@ -88,9 +88,6 @@ internal class JsonDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoade
         [JsonPropertyName(PropertyNames.Runner)]
         public string? Runner { get; set; }
 
-        [JsonPropertyName(PropertyNames.Template)]
-        public string? Template { get; set; }
-
         [JsonPropertyName(PropertyNames.Arguments)]
         public string?[]? Arguments { get; set; }
 

@@ -17,9 +17,6 @@ namespace RLauncher.Yaml.Internal
         [YamlMember(Alias = PropertyNames.Runner, ApplyNamingConventions = false)]
         public string? Runner { get; set; }
 
-        [YamlMember(Alias = PropertyNames.Template, ApplyNamingConventions = false)]
-        public string? Template { get; set; }
-
         [YamlMember(Alias = PropertyNames.Arguments, ApplyNamingConventions = false)]
         public string?[]? Arguments { get; set; }
 

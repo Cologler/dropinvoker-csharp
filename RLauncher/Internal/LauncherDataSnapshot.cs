@@ -5,7 +5,6 @@
         public LauncherDataSnapshot(ILauncherData launcherData)
         {
             this.Runner = launcherData.Runner;
-            this.Template = launcherData.Runner;
             this.Arguments = launcherData.Arguments;
             this.WorkingDirectory = launcherData.WorkingDirectory;
             this.Name = launcherData.Name;
@@ -14,8 +13,6 @@
         }
 
         public string? Runner { get; }
-
-        public string? Template { get; }
 
         public string?[]? Arguments { get; }
 

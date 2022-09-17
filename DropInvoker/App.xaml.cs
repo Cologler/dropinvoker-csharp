@@ -30,7 +30,6 @@ namespace DropInvoker
                 .UseRLauncher()
                 .AddJsonModule()
                 .AddYamlModule()
-                .AddSingleton<ITemplateLoader, TemplateLoader>()
                 .AddSingleton<IRunnerPathEnumerator, PathEnumerator>()
                 .AddSingleton<ILauncherPathEnumerator, PathEnumerator>()
                 .AddSingleton<MainViewModel>()

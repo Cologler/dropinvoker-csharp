@@ -22,17 +22,15 @@ namespace RLauncher
             this._serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public ILauncherData? Template { get; private set; }
+        public string?[]? Arguments => this._launcherData?.Arguments;
 
-        public string?[]? Arguments => this._launcherData?.Arguments ?? this.Template?.Arguments;
-
-        public string? WorkingDirectory => this._launcherData?.WorkingDirectory ?? this.Template?.WorkingDirectory;
+        public string? WorkingDirectory => this._launcherData?.WorkingDirectory;
 
         public string Name => this._launcherData?.Name ?? string.Empty;
 
-        public string Description => this._launcherData?.Description ?? this.Template?.Description ?? string.Empty;
+        public string Description => this._launcherData?.Description ?? string.Empty;
 
-        public string?[] Accepts => this._launcherData?.Accepts ?? this.Template?.Accepts ?? Array.Empty<string>();
+        public string?[] Accepts => this._launcherData?.Accepts ?? Array.Empty<string>();
 
         public async Task RunAsync(IEnumerable<string?>? arguments = null)
         {
@@ -54,18 +52,7 @@ namespace RLauncher
 
             var snapshot = new LauncherDataSnapshot(data);
 
-            this._launcherData = snapshot;
-
-            var template = snapshot.Template;
-            if (template is null)
-            {
-                this.Template = null;
-            }
-            else
-            {
-                this.Template = this._serviceProvider.GetRequiredService<ITemplateLoader>()
-                    .GetTemplate(template);
-            }             
+            this._launcherData = snapshot;     
         }
     }
 }

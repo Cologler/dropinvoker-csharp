@@ -8,8 +8,6 @@
 
         string? Runner { get; }
 
-        string? Template { get; }
-
         string?[]? Arguments { get; }
 
         string? WorkingDirectory { get; }
