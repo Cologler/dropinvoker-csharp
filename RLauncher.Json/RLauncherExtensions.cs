@@ -1,4 +1,7 @@
-﻿using RLauncher.Exceptions;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+using RLauncher.Abstractions;
+using RLauncher.Exceptions;
 using RLauncher.Yaml.Internal;
 
 using System;
@@ -10,6 +13,16 @@ namespace RLauncher.Json
 {
     public static class RLauncherExtensions
     {
+        public static IServiceCollection AddJsonModule(this IServiceCollection services)
+        {
+            ArgumentNullException.ThrowIfNull(services);
+
+            services.AddSingleton<IDocumentLoader<IRunnerData>, JsonDocumentLoader>();
+            services.AddSingleton<IDocumentLoader<ILauncherData>, JsonDocumentLoader>();
+
+            return services;
+        }
+
         public static void LoadFromJson(this Launcher launcher, string jsonText)
         {
             if (launcher is null)
@@ -27,36 +40,6 @@ namespace RLauncher.Json
                 }
 
                 launcher.LoadFrom(data);
-            }
-            catch (JsonException)
-            {
-                throw new InvalidRLauncherConfigurationFileException()
-                {
-                    FileType = ConfigurationFileTypes.Launcher,
-                    FileContent = jsonText
-                };
-            }
-        }
-
-        public static void LoadFromJson(this Runner runner, string jsonText)
-        {
-            if (runner is null)
-                throw new ArgumentNullException(nameof(runner));
-            if (jsonText is null)
-                throw new ArgumentNullException(nameof(jsonText));
-
-            try
-            {
-                if (JsonSerializer.Deserialize<RunnerJson>(jsonText) is not { } data)
-                {
-                    throw new InvalidRLauncherConfigurationFileException()
-                    {
-                        FileType = ConfigurationFileTypes.Runner,
-                        FileContent = jsonText
-                    };
-                }
-
-                runner.LoadFrom(data);
             }
             catch (JsonException)
             {

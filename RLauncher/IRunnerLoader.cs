@@ -1,7 +1,9 @@
-﻿namespace RLauncher
+﻿using System.Threading.Tasks;
+
+namespace RLauncher
 {
     public interface IRunnerLoader
     {
-        public IRunner? GetRunner(string name);
+        public ValueTask<IRunner?> GetRunnerAsync(string name);
     }
 }

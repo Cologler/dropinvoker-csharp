@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace RLauncher
 {
@@ -19,18 +20,6 @@ namespace RLauncher
         public Launcher(IServiceProvider serviceProvider)
         {
             this._serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        }
-
-        public IRunner Runner
-        {
-            get
-            {
-                var name = this._launcherData?.Runner;
-                return name is null 
-                    ? this._serviceProvider.GetRequiredService<IDefaultRunner>()
-                    : this._serviceProvider.GetRequiredService<IRunnerLoader>().GetRunner(name)
-                    ?? this._serviceProvider.GetRequiredService<IDefaultRunner>();
-            }
         }
 
         public ILauncherData? Template { get; private set; }
@@ -45,10 +34,17 @@ namespace RLauncher
 
         public string?[] Accepts => this._launcherData?.Accepts ?? this.Template?.Accepts ?? Array.Empty<string>();
 
-        public Task RunAsync(IEnumerable<string?>? arguments = null)
+        public async Task RunAsync(IEnumerable<string?>? arguments = null)
         {
             var context = new RunContext(this, arguments?.ToArray());
-            return this.Runner.RunAsync(context);
+
+            var runnerName = this._launcherData?.Runner;
+            var runner = runnerName is null
+                    ? this._serviceProvider.GetRequiredService<IDefaultRunner>()
+                    : await this._serviceProvider.GetRequiredService<IRunnerLoader>().GetRunnerAsync(runnerName).ConfigureAwait(false)
+                    ?? this._serviceProvider.GetRequiredService<IDefaultRunner>();
+
+            await runner.RunAsync(context).ConfigureAwait(false);
         }
 
         public void LoadFrom(ILauncherData data)

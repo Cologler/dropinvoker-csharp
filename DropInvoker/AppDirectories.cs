@@ -9,4 +9,6 @@ namespace DropInvoker;
 internal class AppDirectories
 {
     public string GetScenesPath() => "scenes";
+
+    public string GetRunnersPath() => "runners";
 }

@@ -3,6 +3,9 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using RLauncher;
+using RLauncher.Abstractions;
+using RLauncher.Json;
+using RLauncher.Yaml;
 
 using System;
 using System.Collections.Generic;
@@ -25,8 +28,10 @@ namespace DropInvoker
         {
             this.ServiceProvider = new ServiceCollection()
                 .UseRLauncher()
+                .AddJsonModule()
+                .AddYamlModule()
                 .AddSingleton<ITemplateLoader, TemplateLoader>()
-                .AddSingleton<IRunnerLoader, RunnerLoader>()
+                .AddSingleton<IRunnerPathEnumerator, RunnerPathEnumerator>()
                 .AddSingleton<MainViewModel>()
                 .AddSingleton<AppDirectories>()
                 .BuildServiceProvider();

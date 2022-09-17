@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
+using RLauncher.Abstractions;
 using RLauncher.Internal;
 
 using System;
@@ -18,7 +19,8 @@ namespace RLauncher
             services
                 .AddSingleton<IDefaultRunner, ExecutableRunner>()
                 .AddTransient<Launcher>()
-                .AddSingleton<IRunnerLoader, NullRunnerLoader>();
+                .AddSingleton<IRunnerLoader, RunnerLoader>()
+                .AddSingleton<IRunnerPathEnumerator, NullRunnerPathEnumerator>();
 
             return services;
         }
