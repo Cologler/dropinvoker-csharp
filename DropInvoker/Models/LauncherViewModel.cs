@@ -58,13 +58,13 @@ namespace DropInvoker.Models
 
         public string? LauncherName { get; }
 
-        private ValueTask<Launcher?> LoadLauncherAsync(string name)
+        private ValueTask<ILauncher?> LoadLauncherAsync(string name)
         {
             var loader = ((App)Application.Current).ServiceProvider.GetRequiredService<ILauncherLoader>();
             return loader.GetLauncherAsync(name);
         }
 
-        public Launcher? Launcher { get; }
+        public ILauncher? Launcher { get; }
 
         public bool IsEnabled { get; }
 
@@ -73,7 +73,7 @@ namespace DropInvoker.Models
             MessageBox.Show(Application.Current.MainWindow, message);
         }
 
-        Task RunAsync(Launcher launcher, IEnumerable<string> args)
+        Task RunAsync(ILauncher launcher, IEnumerable<string> args)
         {
             try
             {

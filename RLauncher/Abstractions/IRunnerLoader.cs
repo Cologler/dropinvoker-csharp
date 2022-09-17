@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace RLauncher
+namespace RLauncher.Abstractions
 {
     public interface IRunnerLoader
     {

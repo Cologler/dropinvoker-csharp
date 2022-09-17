@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
+using RLauncher.Abstractions;
+
 namespace RLauncher.Json.Internal
 {
     class LauncherJson : ILauncherData

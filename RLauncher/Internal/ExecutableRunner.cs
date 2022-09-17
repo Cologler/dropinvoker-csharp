@@ -5,9 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using RLauncher.Abstractions;
+
 namespace RLauncher.Internal
 {
-    internal class ExecutableRunner : BaseRunner, IDefaultRunner
+    class ExecutableRunner : BaseRunner, IDefaultRunner
     {
         public override Task RunAsync(RunContext context)
         {

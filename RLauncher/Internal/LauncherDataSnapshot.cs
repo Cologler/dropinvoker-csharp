@@ -1,4 +1,6 @@
-﻿namespace RLauncher.Internal
+﻿using RLauncher.Abstractions;
+
+namespace RLauncher.Internal
 {
     class LauncherDataSnapshot : ILauncherData
     {

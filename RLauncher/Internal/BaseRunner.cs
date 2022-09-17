@@ -7,9 +7,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace RLauncher
+using RLauncher.Abstractions;
+
+namespace RLauncher.Internal
 {
-    public abstract class BaseRunner : IRunner
+    abstract class BaseRunner : IRunner
     {
         public abstract Task RunAsync(RunContext context);
 
@@ -32,7 +34,7 @@ namespace RLauncher
             return this.ExpandArguments(context, context.Launcher.Arguments, context.Arguments);
         }
 
-        protected IEnumerable<string> ExpandArguments(RunContext context, IEnumerable<string?>? rawArgs, IEnumerable<string?>? refArgs)
+        protected IEnumerable<string> ExpandArguments(RunContext context, IEnumerable<string> rawArgs, IEnumerable<string> refArgs)
         {
             if (context is null)
                 throw new ArgumentNullException(nameof(context));
@@ -41,15 +43,20 @@ namespace RLauncher
             if (refArgs is null)
                 throw new ArgumentNullException(nameof(refArgs));
 
-            rawArgs ??= Array.Empty<string>();
-            refArgs ??= Array.Empty<string>();
-
             foreach (var arg in rawArgs.Where(z => z != null))
+            {
                 if (arg == "$*")
-                    foreach (var a in refArgs.Where(z => z != null))
-                        yield return this.DecodeArgument(context, a!);
+                {
+                    foreach (var a in refArgs)
+                    {
+                        yield return this.DecodeArgument(context, a);
+                    }
+                }
                 else
-                    yield return this.DecodeArgument(context, arg!);
+                {
+                    yield return this.DecodeArgument(context, arg);
+                }
+            }
         }
 
         internal protected string DecodeArgument(RunContext context, in string argumentValue)

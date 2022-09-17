@@ -4,5 +4,5 @@ namespace RLauncher.Abstractions;
 
 public interface ILauncherLoader
 {
-    public ValueTask<Launcher?> GetLauncherAsync(string name);
+    public ValueTask<ILauncher?> GetLauncherAsync(string name);
 }

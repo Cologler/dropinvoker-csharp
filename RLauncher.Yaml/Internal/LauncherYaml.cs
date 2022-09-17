@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+using RLauncher.Abstractions;
+
 using YamlDotNet.Serialization;
 
 namespace RLauncher.Yaml.Internal

@@ -14,6 +14,7 @@ namespace RLauncher.Internal
         private readonly IServiceProvider _serviceProvider;
         private readonly IEnumerable<ILauncherPathEnumerator> _pathEnumerators;
         private readonly IEnumerable<IDocumentLoader<ILauncherData>> _dataLoaders;
+        private readonly ObjectFactory _launcherFactory;
 
         public LauncherLoader(IServiceProvider serviceProvider,
             IEnumerable<ILauncherPathEnumerator> pathEnumerators, IEnumerable<IDocumentLoader<ILauncherData>> dataLoaders)
@@ -21,9 +22,10 @@ namespace RLauncher.Internal
             this._serviceProvider = serviceProvider;
             this._pathEnumerators = pathEnumerators;
             this._dataLoaders = dataLoaders;
+            this._launcherFactory = ActivatorUtilities.CreateFactory(typeof(Launcher), new[] { typeof(ILauncherData) });
         }
 
-        public async ValueTask<Launcher?> GetLauncherAsync(string name)
+        public async ValueTask<ILauncher?> GetLauncherAsync(string name)
         {
             foreach (var pathEnumerator in this._pathEnumerators)
             {
@@ -36,8 +38,7 @@ namespace RLauncher.Internal
                             if (await dataLoader.CanLoadAsync(path).ConfigureAwait(false))
                             {
                                 var data = await dataLoader.LoadAsync(path).ConfigureAwait(false);
-                                var launcher = this._serviceProvider.GetRequiredService<Launcher>();
-                                launcher.LoadFrom(data);
+                                var launcher = (Launcher) this._launcherFactory(this._serviceProvider, new object[] { data });
                                 return launcher;
                             }
                         }

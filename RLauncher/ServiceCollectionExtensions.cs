@@ -18,7 +18,6 @@ namespace RLauncher
 
             services
                 .AddSingleton<IDefaultRunner, ExecutableRunner>()
-                .AddTransient<Launcher>()
                 .AddSingleton<IRunnerLoader, RunnerLoader>()
                 .AddSingleton<IRunnerPathEnumerator, NullPathEnumerator>()
                 .AddSingleton<ILauncherLoader, LauncherLoader>()

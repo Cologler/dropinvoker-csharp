@@ -1,4 +1,4 @@
-﻿namespace RLauncher
+﻿namespace RLauncher.Abstractions
 {
     public interface ILauncherData
     {

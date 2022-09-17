@@ -1,18 +1,21 @@
 ﻿
 using System;
+using System.Collections.Generic;
+
+using RLauncher.Abstractions;
 
 namespace RLauncher
 {
     public class RunContext
     {
-        public Launcher Launcher { get; }
+        public ILauncher Launcher { get; }
 
-        public RunContext(Launcher launcher, string?[]? arguments = null)
+        internal RunContext(ILauncher launcher, string[] arguments)
         {
             this.Launcher = launcher ?? throw new ArgumentNullException(nameof(launcher));
             this.Arguments = arguments ?? Array.Empty<string>();
         }
 
-        public string?[] Arguments { get; }
+        public IReadOnlyList<string> Arguments { get; }
     }
 }
