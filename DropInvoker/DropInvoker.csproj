@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="PropertyChanged.SourceGenerator" Version="1.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RLauncher.Json\RLauncher.Json.csproj" />
     <ProjectReference Include="..\RLauncher.Yaml\RLauncher.Yaml.csproj" />
     <ProjectReference Include="..\RLauncher\RLauncher.csproj" />

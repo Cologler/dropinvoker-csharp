@@ -2,7 +2,10 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
+using PropertyChanged.SourceGenerator;
+
 using RLauncher;
+using RLauncher.Exceptions;
 using RLauncher.Json;
 using RLauncher.Yaml;
 
@@ -17,38 +20,44 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 
+using YamlDotNet.Core.Tokens;
+
 namespace DropInvoker.Models
 {
-    class LauncherViewModel
+    partial class LauncherViewModel
     {
-        private readonly HashSet<string> _accepts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        public static LauncherViewModel Empty { get; } = new LauncherViewModel(null);
 
-        public LauncherViewModel(string? name)
+        [Notify] string _description = string.Empty;
+
+        public LauncherViewModel(string? launcherName)
         {
-            if (name is null)
+            this.LauncherName = launcherName;
+
+            if (launcherName is null)
             {
-                this.Description = string.Empty;
                 this.IsEnabled = false;
             }
             else
             {
-                this.Description = name;
+                this.Description = launcherName;
                 this.IsEnabled = true;
 
-                this.Launcher = LoadLauncher(name);
-                if (this.Launcher != null)
+                _ = LoadLauncherInfo();
+            }
+
+            async Task LoadLauncherInfo()
+            {
+                if ((await LoadLauncherAsync(launcherName!)) is { } launcher)
                 {
-                    this.Description = this.Launcher.Description;
-                    foreach (var accept in this.Launcher.Accepts)
-                    {
-                        if (accept != null)
-                            this._accepts.Add(accept);
-                    }
+                    this.Description = launcher.Description;
                 }
             }
         }
 
-        private static Launcher? LoadLauncher(string name)
+        public string? LauncherName { get; }
+
+        private ValueTask<Launcher?> LoadLauncherAsync(string name)
         {
             var launcher = ((App)Application.Current).ServiceProvider.GetRequiredService<Launcher>();
 
@@ -58,81 +67,88 @@ namespace DropInvoker.Models
             if (File.Exists(yamlPath))
             {
                 launcher.LoadFromYaml(File.ReadAllText(yamlPath));
-                return launcher;
+                return new(launcher);
             }
 
             var jsonPath = prefix + ".json";
             if (File.Exists(jsonPath))
             {
                 launcher.LoadFromJson(File.ReadAllText(jsonPath));
-                return launcher;
+                return new(launcher);
             }
 
-            return null;
+            return default;
         }
 
         public Launcher? Launcher { get; }
 
-        public string Description { get; }
-
         public bool IsEnabled { get; }
-
-        public static LauncherViewModel Empty { get; } = new LauncherViewModel(null);
 
         private void ShowMessageBox(string message)
         {
             MessageBox.Show(Application.Current.MainWindow, message);
         }
 
-        public Task RunAsync(IEnumerable<string> args)
+        Task RunAsync(Launcher launcher, IEnumerable<string> args)
         {
-            if (this.Launcher is null)
-            {
-                this.ShowMessageBox($"unable load config file: {this.Description}");
-                return Task.CompletedTask;
-            }
-
             try
             {
-                return this.Launcher.RunAsync(args);
+                return launcher.RunAsync(args);
             }
             catch (Exception e)
             {
-                this.ShowMessageBox($"catch exception when run the launcher: \n{e.Message}.");
+                this.ShowMessageBox($"Catch exception when run the launcher: \n{e.Message}.");
             }
 
             return Task.CompletedTask;
         }
 
-        public Task OnDropAsync(DragEventArgs eventArgs)
+        public async Task RunAsync(IEnumerable<string> args)
         {
-            if (this.Launcher is null)
+            var launcher = await LoadLauncherAsync(this.LauncherName!);
+
+            if (launcher is null)
             {
-                this.ShowMessageBox($"unable load config file: {this.Description}");
-                return Task.CompletedTask;
+                this.ShowMessageBox($"Unable load launcher with name: {this.LauncherName}");
+                return;
             }
+
+            await this.RunAsync(launcher, args);
+        }
+
+        public async Task OnDropAsync(DragEventArgs eventArgs)
+        {
+            var launcher = await LoadLauncherAsync(this.LauncherName!);
+
+            if (launcher is null)
+            {
+                this.ShowMessageBox($"Unable load launcher with name: {this.LauncherName}");
+                return;
+            }
+
+            var accepts = launcher.Accepts?.Where(x => x is { }).Cast<string>().ToHashSet() ?? new HashSet<string>();
 
             if (eventArgs.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 var dataStringArray = (string[])eventArgs.Data.GetData(DataFormats.FileDrop);
                 Debug.Assert(dataStringArray.Length > 0);
 
-                if (TestFileDrop(this._accepts, dataStringArray))
+                if (TestFileDrop(accepts, dataStringArray))
                 {
-                    return this.Launcher.RunAsync(dataStringArray);
+                    await this.RunAsync(launcher, dataStringArray);
+                    return;
                 }
             }
 
             if (eventArgs.Data.GetDataPresent(DataFormats.UnicodeText))
             {
-                if (this._accepts.Contains(Accepts.Text))
+                if (accepts.Contains(Accepts.Text))
                 {
                     var data = (string)eventArgs.Data.GetData(DataFormats.UnicodeText);
-                    return this.Launcher.RunAsync(new string[] { data });
+                    await this.RunAsync(launcher, new string[] { data });
+                    return;
                 }
             }
-
-            return Task.CompletedTask;
 
             static bool TestFileDrop(IReadOnlySet<string> accepts, string[] paths)
             {
