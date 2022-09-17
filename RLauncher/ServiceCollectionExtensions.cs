@@ -20,8 +20,8 @@ namespace RLauncher
                 .AddSingleton<IDefaultRunner, ExecutableRunner>()
                 .AddSingleton<IRunnerLoader, RunnerLoader>()
                 .AddSingleton<IRunnerPathEnumerator, NullPathEnumerator>()
-                .AddSingleton<ILauncherLoader, LauncherLoader>()
-                .AddSingleton<ILauncherPathEnumerator, NullPathEnumerator>();
+                .AddSingleton<ICommandLoader, CommandLoader>()
+                .AddSingleton<ICommandPathEnumerator, NullPathEnumerator>();
 
             return services;
         }

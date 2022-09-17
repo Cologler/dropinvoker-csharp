@@ -30,8 +30,7 @@ namespace RLauncher.Internal
                             if (await dataLoader.CanLoadAsync(path).ConfigureAwait(false))
                             {
                                 var data = await dataLoader.LoadAsync(path).ConfigureAwait(false);
-                                var runner = new Runner(data);
-                                return runner;
+                                return new Runner(data);
                             }
                         }
                     }

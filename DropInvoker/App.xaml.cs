@@ -31,7 +31,7 @@ namespace DropInvoker
                 .AddJsonModule()
                 .AddYamlModule()
                 .AddSingleton<IRunnerPathEnumerator, PathEnumerator>()
-                .AddSingleton<ILauncherPathEnumerator, PathEnumerator>()
+                .AddSingleton<ICommandPathEnumerator, PathEnumerator>()
                 .AddSingleton<MainViewModel>()
                 .AddSingleton<AppDirectories>()
                 .BuildServiceProvider();

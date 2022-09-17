@@ -12,12 +12,12 @@ using YamlDotNet.Serialization;
 
 namespace RLauncher.Yaml;
 
-internal class YamlDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoader<ILauncherData>
+internal class YamlDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoader<ICommandData>
 {
     public ValueTask<bool> CanLoadAsync(string extensionName) 
         => new(extensionName is { } && (extensionName.EndsWith(".yaml", StringComparison.OrdinalIgnoreCase) || extensionName.EndsWith(".yml", StringComparison.OrdinalIgnoreCase)));
 
-    ValueTask<T> LoadAsync<T>(string filePath, ConfigurationFileTypes docType)
+    ValueTask<T> LoadAsync<T>(string filePath, ConfigurationFileType docType)
     {
         string? content;
         try
@@ -63,12 +63,12 @@ internal class YamlDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoade
     }
 
     async ValueTask<IRunnerData> IDocumentLoader<IRunnerData>.LoadAsync(string filePath) 
-        => await this.LoadAsync<RunnerYaml>(filePath, ConfigurationFileTypes.Runner).ConfigureAwait(false);
+        => await this.LoadAsync<RunnerData>(filePath, ConfigurationFileType.Runner).ConfigureAwait(false);
 
-    async ValueTask<ILauncherData> IDocumentLoader<ILauncherData>.LoadAsync(string filePath)
-        => await this.LoadAsync<LauncherYaml>(filePath, ConfigurationFileTypes.Launcher).ConfigureAwait(false);
+    async ValueTask<ICommandData> IDocumentLoader<ICommandData>.LoadAsync(string filePath)
+        => await this.LoadAsync<CommandData>(filePath, ConfigurationFileType.Command).ConfigureAwait(false);
 
-    record RunnerYaml : IRunnerData
+    record RunnerData : IRunnerData
     {
         [YamlMember(Alias = PropertyNames.Executable, ApplyNamingConventions = false)]
         public string? Executable { get; set; }
@@ -80,7 +80,7 @@ internal class YamlDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoade
         public string? WorkingDirectory { get; set; }
     }
 
-    record LauncherYaml : ILauncherData
+    record CommandData : ICommandData
     {
         [YamlMember(Alias = PropertyNames.Name, ApplyNamingConventions = false)]
         public string? Name { get; set; }

@@ -12,5 +12,5 @@ internal class AppDirectories
 
     public string GetRunnersPath() => "runners";
 
-    public string GetLaunchersPath() => "launchers";
+    public string GetCommandsPath() => "commands";
 }

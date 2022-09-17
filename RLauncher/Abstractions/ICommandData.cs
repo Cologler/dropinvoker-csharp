@@ -1,6 +1,6 @@
 ﻿namespace RLauncher.Abstractions
 {
-    public interface ILauncherData
+    public interface ICommandData
     {
         string? Name { get; }
 

@@ -25,7 +25,7 @@ public class InvalidRLauncherConfigurationFileException : Exception
     {
     }
 
-    public ConfigurationFileTypes FileType { get; set; }
+    public ConfigurationFileType FileType { get; set; }
 
     public string? FileFullPath { get; set; }
 

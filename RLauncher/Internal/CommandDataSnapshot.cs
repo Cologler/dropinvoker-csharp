@@ -2,9 +2,9 @@
 
 namespace RLauncher.Internal
 {
-    class LauncherDataSnapshot : ILauncherData
+    class CommandDataSnapshot : ICommandData
     {
-        public LauncherDataSnapshot(ILauncherData launcherData)
+        public CommandDataSnapshot(ICommandData launcherData)
         {
             this.Runner = launcherData.Runner;
             this.Arguments = launcherData.Arguments;

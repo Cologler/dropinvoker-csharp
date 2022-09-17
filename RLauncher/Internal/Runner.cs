@@ -33,7 +33,7 @@ namespace RLauncher.Internal
                 startInfo.ArgumentList.Add(args);
             }
 
-            var workingDirectory = context.Launcher.WorkingDirectory ?? this._data?.WorkingDirectory;
+            var workingDirectory = context.Command.WorkingDirectory ?? this._data?.WorkingDirectory;
             if (workingDirectory is null)
             {
                 startInfo.WorkingDirectory = Path.GetDirectoryName(Path.GetFullPath(startInfo.FileName));

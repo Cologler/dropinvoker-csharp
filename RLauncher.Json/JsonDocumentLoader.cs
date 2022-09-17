@@ -9,12 +9,12 @@ using RLauncher.Exceptions;
 
 namespace RLauncher.Json;
 
-internal class JsonDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoader<ILauncherData>
+internal class JsonDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoader<ICommandData>
 {
     public ValueTask<bool> CanLoadAsync(string extensionName) 
         => new(extensionName is { } && extensionName.EndsWith(".json", StringComparison.OrdinalIgnoreCase));
 
-    ValueTask<T> LoadAsync<T>(string filePath, ConfigurationFileTypes docType)
+    ValueTask<T> LoadAsync<T>(string filePath, ConfigurationFileType docType)
     {
         string? content;
         try
@@ -60,12 +60,12 @@ internal class JsonDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoade
     }
 
     async ValueTask<IRunnerData> IDocumentLoader<IRunnerData>.LoadAsync(string filePath) 
-        => await this.LoadAsync<RunnerJson>(filePath, ConfigurationFileTypes.Runner).ConfigureAwait(false);
+        => await this.LoadAsync<RunnerData>(filePath, ConfigurationFileType.Runner).ConfigureAwait(false);
 
-    async ValueTask<ILauncherData> IDocumentLoader<ILauncherData>.LoadAsync(string filePath)
-        => await this.LoadAsync<LauncherJson>(filePath, ConfigurationFileTypes.Launcher).ConfigureAwait(false);
+    async ValueTask<ICommandData> IDocumentLoader<ICommandData>.LoadAsync(string filePath)
+        => await this.LoadAsync<CommandData>(filePath, ConfigurationFileType.Command).ConfigureAwait(false);
 
-    record RunnerJson : IRunnerData
+    record RunnerData : IRunnerData
     {
         [JsonPropertyName(PropertyNames.Executable)]
         public string? Executable { get; set; }
@@ -77,7 +77,7 @@ internal class JsonDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoade
         public string? WorkingDirectory { get; set; }
     }
 
-    record LauncherJson : ILauncherData
+    record CommandData : ICommandData
     {
         [JsonPropertyName(PropertyNames.Name)]
         public string? Name { get; set; }

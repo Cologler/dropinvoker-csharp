@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RLauncher.Abstractions;
 
-public interface ILauncher
+public interface ICommand
 {
     string Name { get; }
 

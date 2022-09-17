@@ -13,7 +13,7 @@ namespace RLauncher.Json
             ArgumentNullException.ThrowIfNull(services);
 
             services.AddSingleton<IDocumentLoader<IRunnerData>, JsonDocumentLoader>();
-            services.AddSingleton<IDocumentLoader<ILauncherData>, JsonDocumentLoader>();
+            services.AddSingleton<IDocumentLoader<ICommandData>, JsonDocumentLoader>();
 
             return services;
         }

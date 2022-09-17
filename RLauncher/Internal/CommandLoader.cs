@@ -9,23 +9,23 @@ using RLauncher.Abstractions;
 
 namespace RLauncher.Internal
 {
-    class LauncherLoader : ILauncherLoader
+    class CommandLoader : ICommandLoader
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IEnumerable<ILauncherPathEnumerator> _pathEnumerators;
-        private readonly IEnumerable<IDocumentLoader<ILauncherData>> _dataLoaders;
-        private readonly ObjectFactory _launcherFactory;
+        private readonly IEnumerable<ICommandPathEnumerator> _pathEnumerators;
+        private readonly IEnumerable<IDocumentLoader<ICommandData>> _dataLoaders;
+        private readonly ObjectFactory _commandFactory;
 
-        public LauncherLoader(IServiceProvider serviceProvider,
-            IEnumerable<ILauncherPathEnumerator> pathEnumerators, IEnumerable<IDocumentLoader<ILauncherData>> dataLoaders)
+        public CommandLoader(IServiceProvider serviceProvider,
+            IEnumerable<ICommandPathEnumerator> pathEnumerators, IEnumerable<IDocumentLoader<ICommandData>> dataLoaders)
         {
             this._serviceProvider = serviceProvider;
             this._pathEnumerators = pathEnumerators;
             this._dataLoaders = dataLoaders;
-            this._launcherFactory = ActivatorUtilities.CreateFactory(typeof(Launcher), new[] { typeof(ILauncherData) });
+            this._commandFactory = ActivatorUtilities.CreateFactory(typeof(Command), new[] { typeof(ICommandData) });
         }
 
-        public async ValueTask<ILauncher?> GetLauncherAsync(string name)
+        public async ValueTask<ICommand?> GetCommandAsync(string name)
         {
             foreach (var pathEnumerator in this._pathEnumerators)
             {
@@ -38,8 +38,7 @@ namespace RLauncher.Internal
                             if (await dataLoader.CanLoadAsync(path).ConfigureAwait(false))
                             {
                                 var data = await dataLoader.LoadAsync(path).ConfigureAwait(false);
-                                var launcher = (Launcher) this._launcherFactory(this._serviceProvider, new object[] { data });
-                                return launcher;
+                                return (Command)this._commandFactory(this._serviceProvider, new object[] { data });
                             }
                         }
                     }

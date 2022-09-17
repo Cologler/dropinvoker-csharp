@@ -36,7 +36,7 @@ namespace DropInvoker
         {
             try
             {
-                await ((LauncherViewModel)((FrameworkElement)sender).DataContext).OnDropAsync(e);
+                await ((CommandViewModel)((FrameworkElement)sender).DataContext).OnDropAsync(e);
             }
             catch (InvalidRLauncherConfigurationFileException exc)
             {

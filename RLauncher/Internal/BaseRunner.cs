@@ -31,7 +31,7 @@ namespace RLauncher.Internal
             if (context is null)
                 throw new ArgumentNullException(nameof(context));
 
-            return this.ExpandArguments(context, context.Launcher.Arguments, context.Arguments);
+            return this.ExpandArguments(context, context.Command.Arguments, context.Arguments);
         }
 
         protected IEnumerable<string> ExpandArguments(RunContext context, IEnumerable<string> rawArgs, IEnumerable<string> refArgs)

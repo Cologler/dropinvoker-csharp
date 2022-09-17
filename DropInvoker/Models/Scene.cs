@@ -20,15 +20,15 @@ namespace DropInvoker.Models
         {
             var slots = sceneInfo.Slots ?? Array.Empty<string>();
 
-            foreach (var slot in slots.Take(SlotCount))
+            foreach (var slot in slots.Concat(Enumerable.Repeat<string?>(null, SlotCount)).Take(SlotCount))
             {
                 try
                 {
-                    this.Slots.Add(slot is null ? LauncherViewModel.Empty : new LauncherViewModel(slot));
+                    this.Slots.Add(slot is null ? CommandViewModel.Empty : new CommandViewModel(slot));
                 }
                 catch (InvalidRLauncherConfigurationFileException exc)
                 {
-                    this.Slots.Add(LauncherViewModel.Empty);
+                    this.Slots.Add(CommandViewModel.Empty);
                     var title = $"Failed to parse {exc.FileType}";
                     var message = $"Unable parse from {exc.FileFullPath} to {exc.FileType}\nSource:\n{exc.FileContent}";
                     MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -38,6 +38,6 @@ namespace DropInvoker.Models
             Debug.Assert(this.Slots.Count == SlotCount);
         }
 
-        public List<LauncherViewModel> Slots { get; } = new List<LauncherViewModel>();
+        public List<CommandViewModel> Slots { get; } = new();
     }
 }

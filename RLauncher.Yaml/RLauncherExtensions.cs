@@ -1,14 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using RLauncher.Abstractions;
-using RLauncher.Yaml.Internal;
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-
-using YamlDotNet.RepresentationModel;
-using YamlDotNet.Serialization;
 
 namespace RLauncher.Yaml
 {
@@ -19,7 +13,7 @@ namespace RLauncher.Yaml
             ArgumentNullException.ThrowIfNull(services);
 
             services.AddSingleton<IDocumentLoader<IRunnerData>, YamlDocumentLoader>();
-            services.AddSingleton<IDocumentLoader<ILauncherData>, YamlDocumentLoader>();
+            services.AddSingleton<IDocumentLoader<ICommandData>, YamlDocumentLoader>();
 
             return services;
         }

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace RLauncher;
 
-public enum ConfigurationFileTypes
+public enum ConfigurationFileType
 {
-    Scene,
     Runner,
-    Launcher,
+    Command,
 }

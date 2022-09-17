@@ -25,15 +25,15 @@ using YamlDotNet.Core.Tokens;
 
 namespace DropInvoker.Models
 {
-    partial class LauncherViewModel
+    partial class CommandViewModel
     {
-        public static LauncherViewModel Empty { get; } = new LauncherViewModel(null);
+        public static CommandViewModel Empty { get; } = new CommandViewModel(null);
 
         [Notify] string _description = string.Empty;
 
-        public LauncherViewModel(string? launcherName)
+        public CommandViewModel(string? launcherName)
         {
-            this.LauncherName = launcherName;
+            this.CommandName = launcherName;
 
             if (launcherName is null)
             {
@@ -44,27 +44,25 @@ namespace DropInvoker.Models
                 this.Description = launcherName;
                 this.IsEnabled = true;
 
-                _ = LoadLauncherInfo();
+                _ = LoadCommandInfo();
             }
 
-            async Task LoadLauncherInfo()
+            async Task LoadCommandInfo()
             {
-                if ((await LoadLauncherAsync(launcherName!)) is { } launcher)
+                if ((await LoadCommandAsync(launcherName!)) is { } launcher)
                 {
                     this.Description = launcher.Description;
                 }
             }
         }
 
-        public string? LauncherName { get; }
+        public string? CommandName { get; }
 
-        private ValueTask<ILauncher?> LoadLauncherAsync(string name)
+        private ValueTask<ICommand?> LoadCommandAsync(string name)
         {
-            var loader = ((App)Application.Current).ServiceProvider.GetRequiredService<ILauncherLoader>();
-            return loader.GetLauncherAsync(name);
+            var loader = ((App)Application.Current).ServiceProvider.GetRequiredService<ICommandLoader>();
+            return loader.GetCommandAsync(name);
         }
-
-        public ILauncher? Launcher { get; }
 
         public bool IsEnabled { get; }
 
@@ -73,15 +71,15 @@ namespace DropInvoker.Models
             MessageBox.Show(Application.Current.MainWindow, message);
         }
 
-        Task RunAsync(ILauncher launcher, IEnumerable<string> args)
+        Task RunAsync(ICommand command, IEnumerable<string> args)
         {
             try
             {
-                return launcher.RunAsync(args);
+                return command.RunAsync(args);
             }
             catch (Exception e)
             {
-                this.ShowMessageBox($"Catch exception when run the launcher: \n{e.Message}.");
+                this.ShowMessageBox($"Catch exception when run the command: \n{e.Message}.");
             }
 
             return Task.CompletedTask;
@@ -89,28 +87,28 @@ namespace DropInvoker.Models
 
         public async Task RunAsync(IEnumerable<string> args)
         {
-            var launcher = await LoadLauncherAsync(this.LauncherName!);
+            var command = await LoadCommandAsync(this.CommandName!);
 
-            if (launcher is null)
+            if (command is null)
             {
-                this.ShowMessageBox($"Unable load launcher with name: {this.LauncherName}");
+                this.ShowMessageBox($"Unable load command with name: {this.CommandName}");
                 return;
             }
 
-            await this.RunAsync(launcher, args);
+            await this.RunAsync(command, args);
         }
 
         public async Task OnDropAsync(DragEventArgs eventArgs)
         {
-            var launcher = await LoadLauncherAsync(this.LauncherName!);
+            var command = await LoadCommandAsync(this.CommandName!);
 
-            if (launcher is null)
+            if (command is null)
             {
-                this.ShowMessageBox($"Unable load launcher with name: {this.LauncherName}");
+                this.ShowMessageBox($"Unable load command with name: {this.CommandName}");
                 return;
             }
 
-            var accepts = launcher.Accepts?.Where(x => x is { }).Cast<string>().ToHashSet() ?? new HashSet<string>();
+            var accepts = command.Accepts?.Where(x => x is { }).Cast<string>().ToHashSet() ?? new HashSet<string>();
 
             if (eventArgs.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -119,7 +117,7 @@ namespace DropInvoker.Models
 
                 if (TestFileDrop(accepts, dataStringArray))
                 {
-                    await this.RunAsync(launcher, dataStringArray);
+                    await this.RunAsync(command, dataStringArray);
                     return;
                 }
             }
@@ -129,7 +127,7 @@ namespace DropInvoker.Models
                 if (accepts.Contains(Accepts.Text))
                 {
                     var data = (string)eventArgs.Data.GetData(DataFormats.UnicodeText);
-                    await this.RunAsync(launcher, new string[] { data });
+                    await this.RunAsync(command, new string[] { data });
                     return;
                 }
             }

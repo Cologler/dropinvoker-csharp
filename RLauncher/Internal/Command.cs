@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace RLauncher.Internal
 {
-    class Launcher : ILauncher
+    class Command : ICommand
     {
         private readonly IServiceProvider _serviceProvider;
-        private ILauncherData? _launcherData;
+        private ICommandData? _launcherData;
 
-        public Launcher(IServiceProvider serviceProvider, ILauncherData data)
+        public Command(IServiceProvider serviceProvider, ICommandData data)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _launcherData = new LauncherDataSnapshot(data);
+            _launcherData = new CommandDataSnapshot(data);
         }
 
         public string Name => _launcherData?.Name ?? string.Empty;

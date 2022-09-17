@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DropInvoker.RLauncherImpl
 {
-    class PathEnumerator : IRunnerPathEnumerator, ILauncherPathEnumerator
+    class PathEnumerator : IRunnerPathEnumerator, ICommandPathEnumerator
     {
         private readonly AppDirectories _directories;
 
@@ -25,9 +25,9 @@ namespace DropInvoker.RLauncherImpl
                 .ToAsyncEnumerable();
         }
 
-        IAsyncEnumerable<string> ILauncherPathEnumerator.EnumeratePathsAsync(string name)
+        IAsyncEnumerable<string> ICommandPathEnumerator.EnumeratePathsAsync(string name)
         {
-            var prefix = Path.Combine(this._directories.GetLaunchersPath(), name);
+            var prefix = Path.Combine(this._directories.GetCommandsPath(), name);
 
             return new[] { ".yaml", ".json", ".yml" }
                 .Select(suffix => prefix + suffix)

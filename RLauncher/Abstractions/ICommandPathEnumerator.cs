@@ -2,7 +2,7 @@
 
 namespace RLauncher.Abstractions;
 
-public interface ILauncherPathEnumerator
+public interface ICommandPathEnumerator
 {
     IAsyncEnumerable<string> EnumeratePathsAsync(string name);
 }
