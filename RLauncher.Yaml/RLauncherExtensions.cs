@@ -23,13 +23,5 @@ namespace RLauncher.Yaml
 
             return services;
         }
-
-        public static void LoadFromYaml(this Launcher launcher, string yamlText)
-        {
-            if (launcher is null)
-                throw new ArgumentNullException(nameof(launcher));
-
-            launcher.LoadFrom(YamlUtils.ToLauncherData(yamlText));
-        }
     }
 }

@@ -5,7 +5,7 @@ using RLauncher.Abstractions;
 
 namespace RLauncher.Internal
 {
-    class NullRunnerPathEnumerator : IRunnerPathEnumerator
+    class NullPathEnumerator : IRunnerPathEnumerator, ILauncherPathEnumerator
     {
         public IAsyncEnumerable<string> EnumeratePathsAsync(string name) => AsyncEnumerable.Empty<string>();
     }

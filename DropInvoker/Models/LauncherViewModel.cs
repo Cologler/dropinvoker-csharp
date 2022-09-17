@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PropertyChanged.SourceGenerator;
 
 using RLauncher;
+using RLauncher.Abstractions;
 using RLauncher.Exceptions;
 using RLauncher.Json;
 using RLauncher.Yaml;
@@ -59,25 +60,8 @@ namespace DropInvoker.Models
 
         private ValueTask<Launcher?> LoadLauncherAsync(string name)
         {
-            var launcher = ((App)Application.Current).ServiceProvider.GetRequiredService<Launcher>();
-
-            var prefix = Path.Combine("launchers", name);
-
-            var yamlPath = prefix + ".yaml";
-            if (File.Exists(yamlPath))
-            {
-                launcher.LoadFromYaml(File.ReadAllText(yamlPath));
-                return new(launcher);
-            }
-
-            var jsonPath = prefix + ".json";
-            if (File.Exists(jsonPath))
-            {
-                launcher.LoadFromJson(File.ReadAllText(jsonPath));
-                return new(launcher);
-            }
-
-            return default;
+            var loader = ((App)Application.Current).ServiceProvider.GetRequiredService<ILauncherLoader>();
+            return loader.GetLauncherAsync(name);
         }
 
         public Launcher? Launcher { get; }
