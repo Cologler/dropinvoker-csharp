@@ -71,18 +71,16 @@ namespace DropInvoker.Models
             MessageBox.Show(Application.Current.MainWindow, message);
         }
 
-        Task RunAsync(ICommand command, IEnumerable<string> args)
+        async Task RunAsync(ICommand command, IEnumerable<string> args)
         {
             try
             {
-                return command.RunAsync(args);
+                await command.RunAsync(args);
             }
             catch (Exception e)
             {
                 this.ShowMessageBox($"Catch exception when run the command: \n{e.Message}.");
             }
-
-            return Task.CompletedTask;
         }
 
         public async Task RunAsync(IEnumerable<string> args)
