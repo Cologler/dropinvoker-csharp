@@ -53,6 +53,8 @@
                                 Value="{Binding IsEnabled}" />
                         <Setter Property="Background"
                                 Value="Transparent" />
+                        <Setter Property="ToolTip"
+                                Value="{Binding Description}" />
                     </Style>
                     <Style TargetType="Border"
                            x:Key="Border">
