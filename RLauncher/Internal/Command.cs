@@ -3,11 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using RLauncher.Abstractions;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace RLauncher.Internal
 {
     class Command : ICommand
@@ -33,7 +28,7 @@ namespace RLauncher.Internal
 
         public async Task RunAsync(IEnumerable<string> arguments)
         {
-            ArgumentNullException.ThrowIfNull(arguments);
+            ThrowIfNull(arguments);
 
             var runnerName = _launcherData?.Runner;
             var runner = runnerName is null
