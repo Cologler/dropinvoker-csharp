@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using RLauncher.Abstractions;
+using RLauncher.Exceptions;
 
 namespace RLauncher.Internal
 {
@@ -34,7 +35,7 @@ namespace RLauncher.Internal
             var runner = runnerName is null
                     ? _serviceProvider.GetRequiredService<IDefaultRunner>()
                     : await _serviceProvider.GetRequiredService<IRunnerLoader>().GetRunnerAsync(runnerName).ConfigureAwait(false)
-                    ?? _serviceProvider.GetRequiredService<IDefaultRunner>();
+                    ?? throw new MissingRunnerException(runnerName);
 
             var context = new RunContext(this, runner, arguments.ToArray());
 

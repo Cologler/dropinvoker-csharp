@@ -1,27 +1,13 @@
-﻿using DropInvoker.Models.Configurations;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Windows;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using PropertyChanged.SourceGenerator;
 
-using RLauncher;
 using RLauncher.Abstractions;
 using RLauncher.Exceptions;
-using RLauncher.Json;
-using RLauncher.Yaml;
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows;
-
-using YamlDotNet.Core.Tokens;
 
 namespace DropInvoker.Models
 {
@@ -71,15 +57,24 @@ namespace DropInvoker.Models
             MessageBox.Show(Application.Current.MainWindow, message);
         }
 
+        private void ShowErrorMessageBox(string message)
+        {
+            MessageBox.Show(Application.Current.MainWindow, message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
         async Task RunAsync(ICommand command, IEnumerable<string> args)
         {
             try
             {
                 await command.RunAsync(args);
             }
+            catch (MissingRunnerException mre)
+            {
+                this.ShowErrorMessageBox($"Runner not found: {mre.RunnerName}");
+            }
             catch (Exception e)
             {
-                this.ShowMessageBox($"Catch exception when run the command: \n{e.Message}.");
+                this.ShowErrorMessageBox($"Catch exception when run the command:\n{e.Message}");
             }
         }
 
