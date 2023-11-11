@@ -1,43 +1,37 @@
-﻿using DropInvoker.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 
-namespace DropInvoker
+using DropInvoker.Models;
+
+using PropertyChanged.SourceGenerator;
+
+namespace DropInvoker;
+
+partial class MainViewModel
 {
-    class MainViewModel : INotifyPropertyChanged
+    [Notify] Scene? _scene;
+
+    public MainViewModel(AppDirectories directories)
     {
-        public MainViewModel(AppDirectories directories)
+        try
         {
-            try
-            {
-                this.SceneLoaders.AddRange(Directory.GetFiles(directories.GetScenesPath()).Select(z => new SceneLoader(z)));
-            }
-            catch (DirectoryNotFoundException)
-            {
-                // pass
-            }
+            this.SceneLoaders.AddRange(directories.GetScenesPath().GetFiles().Select(z => new SceneLoader(z.FullName)));
         }
-
-        public List<SceneLoader> SceneLoaders { get; } = new List<SceneLoader>();
-
-        public SceneLoader SelectedSceneLoader
+        catch (DirectoryNotFoundException)
         {
-            set
-            {
-                if (value is null)
-                    return;
-
-                this.Scene = value.Load();
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Scene)));
-            }
+            // pass
         }
+    }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+    public List<SceneLoader> SceneLoaders { get; } = new List<SceneLoader>();
 
-        public Scene? Scene { get; private set; }
+    public SceneLoader SelectedSceneLoader
+    {
+        set
+        {
+            if (value is null)
+                return;
+
+            this.Scene = value.Load();
+        }
     }
 }

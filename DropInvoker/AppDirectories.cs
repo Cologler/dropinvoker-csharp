@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace DropInvoker;
 
 internal class AppDirectories
 {
-    public string GetScenesPath() => "scenes";
+    public DirectoryInfo AppDataDirectory = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)).CreateSubdirectory("DropInvoker");
 
-    public string GetRunnersPath() => "runners";
+    public DirectoryInfo GetScenesPath() => AppDataDirectory.CreateSubdirectory("scenes");
 
-    public string GetCommandsPath() => "commands";
+    public DirectoryInfo GetRunnersPath() =>  AppDataDirectory.CreateSubdirectory("runners");
+
+    public DirectoryInfo GetCommandsPath() => AppDataDirectory.CreateSubdirectory("commands");
 }

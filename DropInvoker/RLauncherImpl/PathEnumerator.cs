@@ -1,8 +1,6 @@
-﻿using RLauncher.Abstractions;
+﻿using System.IO;
 
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using RLauncher.Abstractions;
 
 namespace DropInvoker.RLauncherImpl
 {
@@ -17,7 +15,7 @@ namespace DropInvoker.RLauncherImpl
 
         IAsyncEnumerable<string> IRunnerPathEnumerator.EnumeratePathsAsync(string name)
         {
-            var prefix = Path.Combine(this._directories.GetRunnersPath(), name);
+            var prefix = Path.Combine(this._directories.GetRunnersPath().FullName, name);
 
             return new[] { ".yaml", ".json", ".yml" }
                 .Select(suffix => prefix + suffix)
@@ -27,7 +25,7 @@ namespace DropInvoker.RLauncherImpl
 
         IAsyncEnumerable<string> ICommandPathEnumerator.EnumeratePathsAsync(string name)
         {
-            var prefix = Path.Combine(this._directories.GetCommandsPath(), name);
+            var prefix = Path.Combine(this._directories.GetCommandsPath().FullName, name);
 
             return new[] { ".yaml", ".json", ".yml" }
                 .Select(suffix => prefix + suffix)
