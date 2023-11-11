@@ -17,17 +17,17 @@ namespace DropInvoker.Models
 
         [Notify] string _description = string.Empty;
 
-        public CommandViewModel(string? launcherName)
+        public CommandViewModel(string? commandName)
         {
-            this.CommandName = launcherName;
+            this.CommandName = commandName;
 
-            if (launcherName is null)
+            if (commandName is null)
             {
                 this.IsEnabled = false;
             }
             else
             {
-                this.Description = launcherName;
+                this.Description = commandName;
                 this.IsEnabled = true;
 
                 _ = LoadCommandInfo();
@@ -35,9 +35,9 @@ namespace DropInvoker.Models
 
             async Task LoadCommandInfo()
             {
-                if ((await LoadCommandAsync(launcherName!)) is { } launcher)
+                if ((await LoadCommandAsync(commandName!)) is { } command)
                 {
-                    this.Description = launcher.Description;
+                    this.Description = command.Description;
                 }
             }
         }
