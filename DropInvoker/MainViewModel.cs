@@ -14,7 +14,11 @@ partial class MainViewModel
     {
         try
         {
-            this.SceneLoaders.AddRange(directories.GetScenesPath().GetFiles().Select(z => new SceneLoader(z.FullName)));
+            this.SceneLoaders.AddRange(
+                directories.GetScenesPath()
+                .GetFiles()
+                .Where(x => ".json".Equals(x.Extension, StringComparison.OrdinalIgnoreCase))
+                .Select(z => new SceneLoader(z.FullName)));
         }
         catch (DirectoryNotFoundException)
         {
