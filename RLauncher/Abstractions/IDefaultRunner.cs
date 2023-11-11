@@ -1,7 +1,6 @@
-﻿namespace RLauncher.Abstractions
-{
-    public interface IDefaultRunner : IRunner
-    {
+﻿namespace RLauncher.Abstractions;
 
-    }
+interface IDefaultRunner : IRunner
+{
+
 }

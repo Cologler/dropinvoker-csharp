@@ -17,7 +17,7 @@ namespace RLauncher
                 throw new ArgumentNullException(nameof(services));
 
             services
-                .AddSingleton<IDefaultRunner, ExecutableRunner>()
+                .AddSingleton<IDefaultRunner, NullRunner>()
                 .AddSingleton<IRunnerLoader, RunnerLoader>()
                 .AddSingleton<IRunnerPathEnumerator, NullPathEnumerator>()
                 .AddSingleton<ICommandLoader, CommandLoader>()

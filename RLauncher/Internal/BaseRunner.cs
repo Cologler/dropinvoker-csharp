@@ -1,11 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 using RLauncher.Abstractions;
 
@@ -13,20 +6,20 @@ namespace RLauncher.Internal
 {
     abstract class BaseRunner : IRunner
     {
-        public abstract Task RunAsync(RunContext context);
+        public abstract Task RunAsync(ExecuteContext context);
 
         protected async Task RunAsync(ProcessStartInfo startInfo)
         {
             if (startInfo is null)
                 throw new ArgumentNullException(nameof(startInfo));
 
-            var tcs = new TaskCompletionSource<bool>();
-            var proc = Process.Start(startInfo);
-            proc.Exited += (_, __) => tcs.SetResult(true);
-            await tcs.Task.ConfigureAwait(false); // ensure proc dispose after return;
+            if (Process.Start(startInfo) is { } proc)
+            {
+                await proc.WaitForExitAsync().ConfigureAwait(false);
+            }
         }
 
-        protected IEnumerable<string> ExpandArguments(RunContext context)
+        protected IEnumerable<string> ExpandCommandArguments(ExecuteContext context)
         {
             if (context is null)
                 throw new ArgumentNullException(nameof(context));
@@ -34,7 +27,7 @@ namespace RLauncher.Internal
             return this.ExpandArguments(context, context.Command.Arguments, context.Arguments);
         }
 
-        protected IEnumerable<string> ExpandArguments(RunContext context, IEnumerable<string> rawArgs, IEnumerable<string> refArgs)
+        protected IEnumerable<string> ExpandArguments(ExecuteContext context, IEnumerable<string> rawArgs, IEnumerable<string> refArgs)
         {
             if (context is null)
                 throw new ArgumentNullException(nameof(context));
@@ -59,7 +52,7 @@ namespace RLauncher.Internal
             }
         }
 
-        internal protected string ExpandVariable(RunContext context, in string argument)
+        protected internal string ExpandVariable(ExecuteContext context, in string argument)
         {
             if (context is null)
                 throw new ArgumentNullException(nameof(context));

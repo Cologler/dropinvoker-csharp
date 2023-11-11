@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace RLauncher.Abstractions;
 
-namespace RLauncher.Abstractions
+interface IRunner
 {
-    public interface IRunner
-    {
-        Task RunAsync(RunContext context);
-    }
+    Task RunAsync(ExecuteContext context);
 }

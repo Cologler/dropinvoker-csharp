@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace RLauncher.Abstractions;
 
-namespace RLauncher.Abstractions
+interface IRunnerLoader
 {
-    public interface IRunnerLoader
-    {
-        public ValueTask<IRunner?> GetRunnerAsync(string name);
-    }
+    public ValueTask<IRunner?> GetRunnerAsync(string name);
 }
