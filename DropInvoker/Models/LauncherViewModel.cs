@@ -101,7 +101,7 @@ namespace DropInvoker.Models
                 return;
             }
 
-            var accepts = command.Accepts?.Where(x => x is { }).Cast<string>().ToHashSet() ?? new HashSet<string>();
+            var accepts = command.Accepts.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             if (eventArgs.Data.GetDataPresent(DataFormats.FileDrop))
             {
