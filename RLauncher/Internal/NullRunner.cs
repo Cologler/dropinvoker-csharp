@@ -4,7 +4,7 @@ using RLauncher.Abstractions;
 
 namespace RLauncher.Internal;
 
-class NullRunner : BaseRunner, IDefaultRunner
+class NullRunner : BaseRunner
 {
     public override IReadOnlyList<string> GetCommand(ExecuteContext context)
     {

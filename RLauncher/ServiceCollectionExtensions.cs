@@ -11,13 +11,15 @@ namespace RLauncher
 {
     public static class ServiceCollectionExtensions
     {
+        internal const string DefaultRunnerKey = "default";
+
         public static IServiceCollection UseRLauncher(this IServiceCollection services)
         {
             if (services is null)
                 throw new ArgumentNullException(nameof(services));
 
             services
-                .AddSingleton<IDefaultRunner, NullRunner>()
+                .AddKeyedSingleton<IRunner, NullRunner>(DefaultRunnerKey)
                 .AddSingleton<IRunnerLoader, RunnerLoader>()
                 .AddSingleton<IRunnerPathEnumerator, NullPathEnumerator>()
                 .AddSingleton<ICommandLoader, CommandLoader>()

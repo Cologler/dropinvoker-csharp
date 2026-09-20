@@ -33,7 +33,7 @@ namespace RLauncher.Internal
 
             var runnerName = _commandData?.Runner;
             var runner = runnerName is null
-                    ? _serviceProvider.GetRequiredService<IDefaultRunner>()
+                    ? _serviceProvider.GetRequiredKeyedService<IRunner>(ServiceCollectionExtensions.DefaultRunnerKey)
                     : await _serviceProvider.GetRequiredService<IRunnerLoader>().GetRunnerAsync(runnerName).ConfigureAwait(false)
                     ?? throw new MissingRunnerException(runnerName);
 
