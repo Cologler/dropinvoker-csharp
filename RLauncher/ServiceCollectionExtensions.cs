@@ -15,8 +15,7 @@ namespace RLauncher
 
         public static IServiceCollection UseRLauncher(this IServiceCollection services)
         {
-            if (services is null)
-                throw new ArgumentNullException(nameof(services));
+            ThrowIfNull(services);
 
             services
                 .AddKeyedSingleton<IRunner, NullRunner>(DefaultRunnerKey)

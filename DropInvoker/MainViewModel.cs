@@ -26,7 +26,7 @@ partial class MainViewModel
         }
     }
 
-    public List<SceneLoader> SceneLoaders { get; } = new List<SceneLoader>();
+    public List<SceneLoader> SceneLoaders { get; } = [];
 
     public SceneLoader SelectedSceneLoader
     {

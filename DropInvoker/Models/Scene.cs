@@ -1,14 +1,9 @@
-﻿using DropInvoker.Models.Configurations;
+﻿using System.Diagnostics;
+using System.Windows;
+
+using DropInvoker.Models.Configurations;
 
 using RLauncher.Exceptions;
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Windows;
 
 namespace DropInvoker.Models
 {
@@ -18,7 +13,7 @@ namespace DropInvoker.Models
 
         public Scene(SceneJson sceneInfo)
         {
-            var slots = sceneInfo.Slots ?? Array.Empty<string>();
+            var slots = sceneInfo.Slots ?? [];
 
             foreach (var slot in slots.Concat(Enumerable.Repeat<string?>(null, SlotCount)).Take(SlotCount))
             {
@@ -38,6 +33,6 @@ namespace DropInvoker.Models
             Debug.Assert(this.Slots.Count == SlotCount);
         }
 
-        public List<CommandViewModel> Slots { get; } = new();
+        public List<CommandViewModel> Slots { get; } = [];
     }
 }

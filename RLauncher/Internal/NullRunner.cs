@@ -8,9 +8,8 @@ class NullRunner : BaseRunner
 {
     public override IReadOnlyList<string> GetCommand(ExecuteContext context)
     {
-        if (context is null)
-            throw new ArgumentNullException(nameof(context));
-        
+        ThrowIfNull(context);
+
         var arguments = this.ExpandCommandArguments(context).ToArray();
         if (arguments.Length == 0)
         {
@@ -23,8 +22,10 @@ class NullRunner : BaseRunner
     public override Task RunAsync(ExecuteContext context)
     {
         var command = this.GetCommand(context);
-        var startInfo = new ProcessStartInfo();
-        startInfo.FileName = command[0];
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = command[0]
+        };
         foreach (var args in command.Skip(1))
         {
             startInfo.ArgumentList.Add(args);

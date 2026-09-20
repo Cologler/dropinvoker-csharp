@@ -2,19 +2,12 @@
 
 namespace RLauncher.Internal
 {
-    class RunnerDataSnapshot : IRunnerData
+    class RunnerDataSnapshot(IRunnerData runnerData) : IRunnerData
     {
-        public RunnerDataSnapshot(IRunnerData runnerData)
-        {
-            this.Executable = runnerData.Executable;
-            this.Arguments = runnerData.Arguments;
-            this.WorkingDirectory = runnerData.WorkingDirectory;
-        }
+        public string? Executable { get; } = runnerData.Executable;
 
-        public string? Executable { get; }
+        public string?[]? Arguments { get; } = runnerData.Arguments;
 
-        public string?[]? Arguments { get; }
-
-        public string? WorkingDirectory { get; }
+        public string? WorkingDirectory { get; } = runnerData.WorkingDirectory;
     }
 }

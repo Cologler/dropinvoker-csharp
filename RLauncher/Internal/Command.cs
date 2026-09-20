@@ -6,49 +6,43 @@ using RLauncher.Exceptions;
 
 namespace RLauncher.Internal
 {
-    class Command : ICommand
+    class Command(IServiceProvider serviceProvider, ICommandData data) : ICommand
     {
-        private readonly IServiceProvider _serviceProvider;
-        private ICommandData? _commandData;
+        private readonly IServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        private readonly CommandDataSnapshot _commandData = new CommandDataSnapshot(data);
 
-        public Command(IServiceProvider serviceProvider, ICommandData data)
-        {
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _commandData = new CommandDataSnapshot(data);
-        }
+        public string Name => this._commandData?.Name ?? string.Empty;
 
-        public string Name => _commandData?.Name ?? string.Empty;
+        public string Description => this._commandData?.Description ?? string.Empty;
 
-        public string Description => _commandData?.Description ?? string.Empty;
+        public IReadOnlyList<string> Arguments => this._commandData?.Arguments?.Where(x => x is not null).Cast<string>().ToArray() ?? [];
 
-        public IReadOnlyList<string> Arguments => _commandData?.Arguments?.Where(x => x is not null).Cast<string>().ToArray() ?? Array.Empty<string>();
+        public string? WorkingDirectory => this._commandData?.WorkingDirectory;
 
-        public string? WorkingDirectory => _commandData?.WorkingDirectory;
-
-        public IReadOnlyList<string> Accepts => _commandData?.Accepts?.Where(x => x is not null).Cast<string>().ToArray() ?? Array.Empty<string>();
+        public IReadOnlyList<string> Accepts => this._commandData?.Accepts?.Where(x => x is not null).Cast<string>().ToArray() ?? [];
 
         private async Task<ExecuteContext> CreateContextAsync(IEnumerable<string> arguments)
         {
             ThrowIfNull(arguments);
 
-            var runnerName = _commandData?.Runner;
+            var runnerName = this._commandData?.Runner;
             var runner = runnerName is null
-                    ? _serviceProvider.GetRequiredKeyedService<IRunner>(ServiceCollectionExtensions.DefaultRunnerKey)
-                    : await _serviceProvider.GetRequiredService<IRunnerLoader>().GetRunnerAsync(runnerName).ConfigureAwait(false)
+                    ? this._serviceProvider.GetRequiredKeyedService<IRunner>(ServiceCollectionExtensions.DefaultRunnerKey)
+                    : await this._serviceProvider.GetRequiredService<IRunnerLoader>().GetRunnerAsync(runnerName).ConfigureAwait(false)
                     ?? throw new MissingRunnerException(runnerName);
 
-            return new ExecuteContext(this, runner, arguments.ToArray());
+            return new ExecuteContext(this, runner, [.. arguments]);
         }
 
         public async ValueTask<IReadOnlyList<string>> GetCommandAsync(IEnumerable<string> arguments)
         {
-            var context = await CreateContextAsync(arguments).ConfigureAwait(false);
+            var context = await this.CreateContextAsync(arguments).ConfigureAwait(false);
             return context.Runner.GetCommand(context);
         }
 
         public async Task RunAsync(IEnumerable<string> arguments)
         {
-            var context = await CreateContextAsync(arguments).ConfigureAwait(false);
+            var context = await this.CreateContextAsync(arguments).ConfigureAwait(false);
             await context.Runner.RunAsync(context).ConfigureAwait(false);
         }
     }

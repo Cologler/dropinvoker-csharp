@@ -12,8 +12,7 @@ namespace RLauncher.Internal
 
         protected async Task RunAsync(ProcessStartInfo startInfo)
         {
-            if (startInfo is null)
-                throw new ArgumentNullException(nameof(startInfo));
+            ThrowIfNull(startInfo);
 
             if (Process.Start(startInfo) is { } proc)
             {
@@ -23,20 +22,16 @@ namespace RLauncher.Internal
 
         protected IEnumerable<string> ExpandCommandArguments(ExecuteContext context)
         {
-            if (context is null)
-                throw new ArgumentNullException(nameof(context));
+            ThrowIfNull(context);
 
             return this.ExpandArguments(context, context.Command.Arguments, context.Arguments);
         }
 
         protected IEnumerable<string> ExpandArguments(ExecuteContext context, IEnumerable<string> rawArgs, IEnumerable<string> refArgs)
         {
-            if (context is null)
-                throw new ArgumentNullException(nameof(context));
-            if (rawArgs is null)
-                throw new ArgumentNullException(nameof(rawArgs));
-            if (refArgs is null)
-                throw new ArgumentNullException(nameof(refArgs));
+            ThrowIfNull(context);
+            ThrowIfNull(rawArgs);
+            ThrowIfNull(refArgs);
 
             foreach (var arg in rawArgs.Where(z => z != null))
             {
@@ -56,10 +51,8 @@ namespace RLauncher.Internal
 
         protected internal string ExpandVariable(ExecuteContext context, in string argument)
         {
-            if (context is null)
-                throw new ArgumentNullException(nameof(context));
-            if (argument is null)
-                throw new ArgumentNullException(nameof(argument));
+            ThrowIfNull(context);
+            ThrowIfNull(argument);
 
             var value = argument;
 

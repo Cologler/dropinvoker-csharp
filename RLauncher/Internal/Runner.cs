@@ -4,33 +4,32 @@ using RLauncher.Abstractions;
 
 namespace RLauncher.Internal;
 
-class Runner : BaseRunner
+class Runner(IRunnerData data) : BaseRunner
 {
-    private readonly IRunnerData _data;
-
-    public Runner(IRunnerData data) => this._data = new RunnerDataSnapshot(data);
+    private readonly RunnerDataSnapshot _data = new RunnerDataSnapshot(data);
 
     public override IReadOnlyList<string> GetCommand(ExecuteContext context)
     {
-        if (context is null)
-            throw new ArgumentNullException(nameof(context));
+        ThrowIfNull(context);
 
         var executable = this._data?.Executable ?? throw new InvalidOperationException("the executable of runner is empty.");
 
         var runnerArguments = this._data?.Arguments?
             .Where(x => x is not null)
             .Cast<string>()
-            .ToArray() ?? Array.Empty<string>();
+            .ToArray() ?? [];
 
         var arguments = this.ExpandArguments(context, runnerArguments, this.ExpandCommandArguments(context));
-        return new[] { executable }.Concat(arguments).ToArray();
+        return [executable, .. arguments];
     }
 
     public override Task RunAsync(ExecuteContext context)
     {
         var command = this.GetCommand(context);
-        var startInfo = new ProcessStartInfo();
-        startInfo.FileName = command[0];
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = command[0]
+        };
         foreach (var args in command.Skip(1))
         {
             startInfo.ArgumentList.Add(args);

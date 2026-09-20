@@ -38,14 +38,14 @@ partial class CommandViewModel
 
         async Task LoadCommandInfo()
         {
-            if ((await LoadCommandAsync(commandName!)) is { } command)
+            if ((await this.LoadCommandAsync(commandName)) is { } command)
             {
                 this.Description = command.Description;
                 this.DetailedDescription = command.Description;
                 try
                 {
                     // Keep the input placeholder because dropped content is not known until execution.
-                    var commandLine = await command.GetCommandAsync(new[] { "$*" });
+                    var commandLine = await command.GetCommandAsync(["$*"]);
                     this.DetailedDescription = $"{command.Description}{Environment.NewLine}{string.Join(" ", commandLine.Select(QuoteArgument))}";
                 }
                 catch (Exception e)
@@ -91,12 +91,7 @@ partial class CommandViewModel
 
     public bool IsEnabled { get; }
 
-    private void ShowMessageBox(string message)
-    {
-        MessageBox.Show(Application.Current.MainWindow, message);
-    }
-
-    private void ShowErrorMessageBox(string message)
+    private static void ShowErrorMessageBox(string message)
     {
         MessageBox.Show(Application.Current.MainWindow, message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
     }
@@ -109,21 +104,21 @@ partial class CommandViewModel
         }
         catch (MissingRunnerException mre)
         {
-            this.ShowErrorMessageBox($"Runner not found: {mre.RunnerName}");
+            ShowErrorMessageBox($"Runner not found: {mre.RunnerName}");
         }
         catch (Exception e)
         {
-            this.ShowErrorMessageBox($"Catch exception when run the command:\n{e.Message}");
+            ShowErrorMessageBox($"Catch exception when run the command:\n{e.Message}");
         }
     }
 
     public async Task RunAsync(IEnumerable<string> args)
     {
-        var command = await LoadCommandAsync(this.CommandName!);
+        var command = await this.LoadCommandAsync(this.CommandName!);
 
         if (command is null)
         {
-            this.ShowErrorMessageBox($"Command not found: {this.CommandName}");
+            ShowErrorMessageBox($"Command not found: {this.CommandName}");
             return;
         }
 
@@ -132,11 +127,11 @@ partial class CommandViewModel
 
     public async Task OnDropAsync(DragEventArgs eventArgs)
     {
-        var command = await LoadCommandAsync(this.CommandName!);
+        var command = await this.LoadCommandAsync(this.CommandName!);
 
         if (command is null)
         {
-            this.ShowErrorMessageBox($"Command not found: {this.CommandName}");
+            ShowErrorMessageBox($"Command not found: {this.CommandName}");
             return;
         }
 
@@ -159,7 +154,7 @@ partial class CommandViewModel
             if (accepts.Contains(Accepts.Text))
             {
                 var data = (string)eventArgs.Data.GetData(DataFormats.UnicodeText);
-                await this.RunAsync(command, new string[] { data });
+                await this.RunAsync(command, [data]);
                 return;
             }
         }
@@ -177,7 +172,7 @@ partial class CommandViewModel
                 if (File.Exists(item))
                 {
                     files.Add(item);
-                } 
+                }
                 else if (Directory.Exists(item))
                 {
                     dirs.Add(item);
@@ -185,7 +180,7 @@ partial class CommandViewModel
                 else
                 {
                     others.Add(item);
-                } 
+                }
             }
 
             if (others.Count > 0)

@@ -1,11 +1,6 @@
 ﻿namespace RLauncher.Exceptions;
 
-public sealed class MissingRunnerException : Exception
+public sealed class MissingRunnerException(string runnerName) : Exception
 {
-    public MissingRunnerException(string runnerName)
-    {
-        this.RunnerName = runnerName;
-    }
-
-    public string RunnerName { get; }
+    public string RunnerName { get; } = runnerName;
 }
