@@ -10,14 +10,12 @@ class Runner : BaseRunner
 
     public Runner(IRunnerData data) => this._data = new RunnerDataSnapshot(data);
 
-    public override Task RunAsync(ExecuteContext context)
+    public override IReadOnlyList<string> GetCommand(ExecuteContext context)
     {
         if (context is null)
             throw new ArgumentNullException(nameof(context));
 
-        var startInfo = new ProcessStartInfo();
-
-        startInfo.FileName = this._data?.Executable ?? throw new InvalidOperationException("the executable of runner is empty.");
+        var executable = this._data?.Executable ?? throw new InvalidOperationException("the executable of runner is empty.");
 
         var runnerArguments = this._data?.Arguments?
             .Where(x => x is not null)
@@ -25,7 +23,15 @@ class Runner : BaseRunner
             .ToArray() ?? Array.Empty<string>();
 
         var arguments = this.ExpandArguments(context, runnerArguments, this.ExpandCommandArguments(context));
-        foreach (var args in arguments)
+        return new[] { executable }.Concat(arguments).ToArray();
+    }
+
+    public override Task RunAsync(ExecuteContext context)
+    {
+        var command = this.GetCommand(context);
+        var startInfo = new ProcessStartInfo();
+        startInfo.FileName = command[0];
+        foreach (var args in command.Skip(1))
         {
             startInfo.ArgumentList.Add(args);
         }

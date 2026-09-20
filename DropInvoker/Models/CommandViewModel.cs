@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Windows;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ partial class CommandViewModel
     public static CommandViewModel Empty { get; } = new CommandViewModel(null);
 
     [Notify] string _description = string.Empty;
+    [Notify] string _detailedDescription = string.Empty;
 
     public CommandViewModel(string? commandName)
     {
@@ -28,6 +30,7 @@ partial class CommandViewModel
         else
         {
             this.Description = commandName;
+            this.DetailedDescription = commandName;
             this.IsEnabled = true;
 
             _ = LoadCommandInfo();
@@ -38,11 +41,47 @@ partial class CommandViewModel
             if ((await LoadCommandAsync(commandName!)) is { } command)
             {
                 this.Description = command.Description;
+                this.DetailedDescription = command.Description;
+                try
+                {
+                    // Keep the input placeholder because dropped content is not known until execution.
+                    var commandLine = await command.GetCommandAsync(new[] { "$*" });
+                    this.DetailedDescription = $"{command.Description}{Environment.NewLine}{string.Join(" ", commandLine.Select(QuoteArgument))}";
+                }
+                catch (Exception e)
+                {
+                    this.DetailedDescription = $"{command.Description}{Environment.NewLine}{e.Message}";
+                }
             }
         }
     }
 
     public string? CommandName { get; }
+
+    private static string QuoteArgument(string argument)
+    {
+        if (argument.Length > 0 && !argument.Any(c => char.IsWhiteSpace(c) || c == '"'))
+            return argument;
+
+        var result = new StringBuilder().Append('"');
+        var backslashes = 0;
+        foreach (var character in argument)
+        {
+            if (character == '\\')
+            {
+                backslashes++;
+                continue;
+            }
+
+            // Windows parsing requires doubled backslashes before an escaped quote.
+            result.Append('\\', character == '"' ? backslashes * 2 + 1 : backslashes);
+            result.Append(character);
+            backslashes = 0;
+        }
+
+        // Trailing backslashes must not escape the closing quote.
+        return result.Append('\\', backslashes * 2).Append('"').ToString();
+    }
 
     private ValueTask<ICommand?> LoadCommandAsync(string name)
     {

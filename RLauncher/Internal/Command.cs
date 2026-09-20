@@ -27,7 +27,7 @@ namespace RLauncher.Internal
 
         public IReadOnlyList<string> Accepts => _commandData?.Accepts?.Where(x => x is not null).Cast<string>().ToArray() ?? Array.Empty<string>();
 
-        public async Task RunAsync(IEnumerable<string> arguments)
+        private async Task<ExecuteContext> CreateContextAsync(IEnumerable<string> arguments)
         {
             ThrowIfNull(arguments);
 
@@ -37,9 +37,19 @@ namespace RLauncher.Internal
                     : await _serviceProvider.GetRequiredService<IRunnerLoader>().GetRunnerAsync(runnerName).ConfigureAwait(false)
                     ?? throw new MissingRunnerException(runnerName);
 
-            var context = new ExecuteContext(this, runner, arguments.ToArray());
+            return new ExecuteContext(this, runner, arguments.ToArray());
+        }
 
-            await runner.RunAsync(context).ConfigureAwait(false);
+        public async ValueTask<IReadOnlyList<string>> GetCommandAsync(IEnumerable<string> arguments)
+        {
+            var context = await CreateContextAsync(arguments).ConfigureAwait(false);
+            return context.Runner.GetCommand(context);
+        }
+
+        public async Task RunAsync(IEnumerable<string> arguments)
+        {
+            var context = await CreateContextAsync(arguments).ConfigureAwait(false);
+            await context.Runner.RunAsync(context).ConfigureAwait(false);
         }
     }
 }

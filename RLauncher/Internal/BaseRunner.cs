@@ -6,6 +6,8 @@ namespace RLauncher.Internal
 {
     abstract class BaseRunner : IRunner
     {
+        public abstract IReadOnlyList<string> GetCommand(ExecuteContext context);
+
         public abstract Task RunAsync(ExecuteContext context);
 
         protected async Task RunAsync(ProcessStartInfo startInfo)
