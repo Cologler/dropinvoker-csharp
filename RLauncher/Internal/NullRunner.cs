@@ -19,7 +19,7 @@ class NullRunner : BaseRunner
         return arguments;
     }
 
-    public override Task RunAsync(ExecuteContext context)
+    public override Task<int> RunAsync(ExecuteContext context)
     {
         var command = this.GetCommand(context);
         var startInfo = new ProcessStartInfo

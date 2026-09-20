@@ -4,5 +4,5 @@ interface IRunner
 {
     IReadOnlyList<string> GetCommand(ExecuteContext context);
 
-    Task RunAsync(ExecuteContext context);
+    Task<int> RunAsync(ExecuteContext context);
 }

@@ -40,10 +40,10 @@ namespace RLauncher.Internal
             return context.Runner.GetCommand(context);
         }
 
-        public async Task RunAsync(IEnumerable<string> arguments)
+        public async Task<int> RunAsync(IEnumerable<string> arguments)
         {
             var context = await this.CreateContextAsync(arguments).ConfigureAwait(false);
-            await context.Runner.RunAsync(context).ConfigureAwait(false);
+            return await context.Runner.RunAsync(context).ConfigureAwait(false);
         }
     }
 }

@@ -100,7 +100,11 @@ partial class CommandViewModel
     {
         try
         {
-            await command.RunAsync(args);
+            var exitCode = await command.RunAsync(args);
+            if (exitCode != 0)
+            {
+                ShowErrorMessageBox($"Command '{command.Name}' exited with code {exitCode}.");
+            }
         }
         catch (MissingRunnerException mre)
         {

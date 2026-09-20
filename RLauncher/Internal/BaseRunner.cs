@@ -8,16 +8,16 @@ namespace RLauncher.Internal
     {
         public abstract IReadOnlyList<string> GetCommand(ExecuteContext context);
 
-        public abstract Task RunAsync(ExecuteContext context);
+        public abstract Task<int> RunAsync(ExecuteContext context);
 
-        protected async Task RunAsync(ProcessStartInfo startInfo)
+        protected async Task<int> RunAsync(ProcessStartInfo startInfo)
         {
             ThrowIfNull(startInfo);
 
-            if (Process.Start(startInfo) is { } proc)
-            {
-                await proc.WaitForExitAsync().ConfigureAwait(false);
-            }
+            using var proc = Process.Start(startInfo)
+                ?? throw new InvalidOperationException("The process could not be started.");
+            await proc.WaitForExitAsync().ConfigureAwait(false);
+            return proc.ExitCode;
         }
 
         protected IEnumerable<string> ExpandCommandArguments(ExecuteContext context)

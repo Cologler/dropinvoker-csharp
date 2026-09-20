@@ -23,7 +23,7 @@ class Runner(IRunnerData data) : BaseRunner
         return [executable, .. arguments];
     }
 
-    public override Task RunAsync(ExecuteContext context)
+    public override Task<int> RunAsync(ExecuteContext context)
     {
         var command = this.GetCommand(context);
         var startInfo = new ProcessStartInfo

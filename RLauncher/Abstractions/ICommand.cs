@@ -23,5 +23,8 @@ public interface ICommand
     /// <returns>The executable followed by its arguments.</returns>
     ValueTask<IReadOnlyList<string>> GetCommandAsync(IEnumerable<string> arguments);
 
-    Task RunAsync(IEnumerable<string> arguments);
+    /// <summary>Runs the command and waits for the process to exit.</summary>
+    /// <param name="arguments">The input arguments to substitute for <c>$*</c>.</param>
+    /// <returns>The process exit code.</returns>
+    Task<int> RunAsync(IEnumerable<string> arguments);
 }
