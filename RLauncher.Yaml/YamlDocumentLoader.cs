@@ -99,5 +99,8 @@ internal class YamlDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoade
 
         [YamlMember(Alias = PropertyNames.Accepts, ApplyNamingConventions = false)]
         public string?[]? Accepts { get; set; }
+
+        [YamlMember(Alias = PropertyNames.IgnoreExitCode, ApplyNamingConventions = false)]
+        public bool IgnoreExitCode { get; set; }
     }
 }

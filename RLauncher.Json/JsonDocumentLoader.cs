@@ -96,5 +96,8 @@ internal class JsonDocumentLoader : IDocumentLoader<IRunnerData>, IDocumentLoade
 
         [JsonPropertyName(PropertyNames.Accepts)]
         public string?[]? Accepts { get; set; }
+
+        [JsonPropertyName(PropertyNames.IgnoreExitCode)]
+        public bool IgnoreExitCode { get; set; }
     }
 }

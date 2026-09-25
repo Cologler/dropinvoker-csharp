@@ -13,5 +13,6 @@ namespace RLauncher
         public const string WorkingDirectory = "working_directory";
         public const string Description = "description";
         public const string Accepts = "accepts";
+        public const string IgnoreExitCode = "ignore_exit_code";
     }
 }

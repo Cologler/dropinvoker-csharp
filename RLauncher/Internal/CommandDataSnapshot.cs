@@ -15,5 +15,7 @@ namespace RLauncher.Internal
         public string? Description { get; } = launcherData.Description;
 
         public string?[]? Accepts { get; } = launcherData.Accepts?.Clone() as string?[];
+
+        public bool IgnoreExitCode { get; } = launcherData.IgnoreExitCode;
     }
 }

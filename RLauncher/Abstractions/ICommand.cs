@@ -18,6 +18,9 @@ public interface ICommand
 
     IReadOnlyList<string> Arguments { get; }
 
+    /// <summary>Gets whether a nonzero process exit code should be ignored by the caller.</summary>
+    bool IgnoreExitCode { get; }
+
     /// <summary>Gets the executable and expanded arguments without running the command.</summary>
     /// <param name="arguments">The input arguments to substitute for <c>$*</c>.</param>
     /// <returns>The executable followed by its arguments.</returns>

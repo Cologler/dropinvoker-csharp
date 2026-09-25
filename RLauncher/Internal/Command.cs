@@ -21,6 +21,8 @@ namespace RLauncher.Internal
 
         public IReadOnlyList<string> Accepts => this._commandData?.Accepts?.Where(x => x is not null).Cast<string>().ToArray() ?? [];
 
+        public bool IgnoreExitCode => this._commandData.IgnoreExitCode;
+
         private async Task<ExecuteContext> CreateContextAsync(IEnumerable<string> arguments)
         {
             ThrowIfNull(arguments);

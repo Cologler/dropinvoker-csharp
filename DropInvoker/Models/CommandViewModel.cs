@@ -103,7 +103,7 @@ partial class CommandViewModel
         try
         {
             var exitCode = await command.RunAsync(args);
-            if (exitCode != 0 && exitCode != StatusControlCExit)
+            if (exitCode != 0 && exitCode != StatusControlCExit && !command.IgnoreExitCode)
             {
                 ShowErrorMessageBox($"Command '{command.Name}' exited with code {exitCode}.");
             }

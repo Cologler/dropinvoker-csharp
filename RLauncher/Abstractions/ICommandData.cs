@@ -13,5 +13,7 @@
         string? WorkingDirectory { get; }
 
         string?[]? Accepts { get; }
+
+        bool IgnoreExitCode { get; }
     }
 }
