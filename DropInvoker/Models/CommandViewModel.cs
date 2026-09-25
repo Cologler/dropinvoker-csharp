@@ -14,6 +14,8 @@ namespace DropInvoker.Models;
 
 partial class CommandViewModel
 {
+    private const int StatusControlCExit = unchecked((int)0xC000013A); // -1073741510
+
     public static CommandViewModel Empty { get; } = new CommandViewModel(null);
 
     [Notify] string _description = string.Empty;
@@ -101,7 +103,7 @@ partial class CommandViewModel
         try
         {
             var exitCode = await command.RunAsync(args);
-            if (exitCode != 0)
+            if (exitCode != 0 && exitCode != StatusControlCExit)
             {
                 ShowErrorMessageBox($"Command '{command.Name}' exited with code {exitCode}.");
             }
